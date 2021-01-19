@@ -108,7 +108,7 @@ class Cword {
           let val = cell.value;
           if (val != null && val.length > 0) {
             let cellId = Util.toCellId(y, x);
-            this.cellValues[cellId] = val;
+            cellValues[cellId] = val;
             // console.log('............ cell->toObject : ['+cellKey+'] : ['+val+']');
           }        
         }
@@ -1171,40 +1171,36 @@ class Cword {
 
   getAcrossClues() {
     var list = [];
-    for (let [key, clue] of this.clueMap) {
+    // for (let [key, clue] of this.clueMap) {
+    //   if (clue.isAcross) {
+    //     list.push(clue);    
+    //   }
+    // }
+
+    for (let clue of this.clueMap.values()) {
       if (clue.isAcross) {
         list.push(clue);    
       }
     }
 
-    // let mapIter = this.clueMap.values();
-    // let result = mapIter.next();
-    // while (!result.done) {
-    //   let clue = result.value;
-    //   if (clue.isAcross) {
-    //     list.push(clue);    
-    //   }
-    // }
     var blist = list.sort(this.sortCluesByLabel);
     return blist;
   }
   
   getDownClues() {
     var list = [];
-    for (let [key, clue] of this.clueMap) {
-      // console.log(key);
-      if (!clue.isAcross) {
-        list.push(clue);    
-      }
-    }
-    // let mapIter = this.clueMap.values();
-    // let result = mapIter.next();
-    // while (!result.done) {
-    //   let clue = result.value;
+    // for (let [key, clue] of this.clueMap) {
+    //   // console.log(key);
     //   if (!clue.isAcross) {
     //     list.push(clue);    
     //   }
     // }
+    for (let clue of this.clueMap.values()) {
+      if (!clue.isAcross) {
+        list.push(clue);    
+      }
+    }
+
     var blist = list.sort(this.sortCluesByLabel);
     return blist;
   }
@@ -1466,11 +1462,52 @@ class Cword {
     return list;
   }
 
-  cellSelected(id) {
-    // let cellKey = Util.cellKeyFromCellId(id);
-    // let cell = this.cellMap(cellKey);
-    // let acrossClue = cell.acrossClue
-    // let asel = this.isClueSelected(acrossClue);
+  isCellSelected(cell) {
+    let selKey = '';
+    if (this.cellSelected != null) {
+      selKey = this.cellSelected.toId();
+    }
+    if (cell.toId() === selKey) {
+      return true;
+    }
+    return false;
+  }
+
+  isClueSelected(clue) {
+    let selKey = '';
+    if (this.clueSelected != null) {
+      selKey = this.clueSelected.uniqLocation();
+    }
+    if (clue.uniqLocation() === selKey) {
+      return true;
+    }
+    return false;
+  }
+
+  cellChanged(id, value) {
+    let cellKey = Util.cellKeyFromCellId(id);
+    let cell = this.cellMap.get(cellKey);
+    let acrossClue = cell.acrossClue
+    let acrossSel = this.isClueSelected(acrossClue);
+
+    let downClue = cell.downClue
+    // let downSel = this.isClueSelected(downClue);
+
+    if (acrossClue != null) {
+      if (downClue != null) {
+        if (acrossSel) {
+          this.clueSelected = downClue;
+        } else {
+          this.clueSelected = acrossClue;
+        }
+      } else {
+        this.clueSelected = acrossClue;
+      }
+    } else {
+      this.clueSelected = downClue;
+    }
+
+    cell.value = value;
 
   }
 

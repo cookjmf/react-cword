@@ -31,6 +31,7 @@ class Game extends React.Component {
     this.onKeyUpParamAcrossTextarea = this.onKeyUpParamAcrossTextarea.bind(this);
     this.onKeyUpParamDownTextarea = this.onKeyUpParamDownTextarea.bind(this);
     // play
+    this.onClickPlayCell = this.onClickPlayCell.bind(this);
     this.onChangePlayCell = this.onChangePlayCell.bind(this);
     this.onKeyUpPlayCell = this.onKeyUpPlayCell.bind(this);
     this.onKeyDownPlayCell = this.onKeyDownPlayCell.bind(this);
@@ -335,25 +336,43 @@ class Game extends React.Component {
 
   }
 
-  onChangePlayCell(ev) {
-
-    console.log('Game : START : -------------------------------------------->');
-    console.log('Game : START : onChangePlayCell ----> '+ev+'------------->');
-    console.log('Game : START : -------------------------------------------->');  
+  onClickPlayCell(ev) {
 
     var elem = ev.currentTarget;
     var id = elem.id;
-    let cword = this.state.cword;
-    cword.cellSelected(id);
+
+    console.log('Game : START : -------------------------------------------->');
+    console.log('Game : START : onClickPlayCell ----> id: '+id+' ------------->');
+    console.log('Game : START : -------------------------------------------->');  
 
     
 
   }
 
-  onKeyUpPlayCell(ev) {
+  onChangePlayCell(ev) {
+
+    var elem = ev.currentTarget;
+    var id = elem.id;
+    var value = elem.value;
 
     console.log('Game : START : -------------------------------------------->');
-    console.log('Game : START : onKeyUpPlayCell ----> '+ev+'------------->');
+    console.log('Game : START : onChangePlayCell ----> id : '+id+' ------------->');
+    console.log('Game : START : onChangePlayCell ----> value : '+value+' ------------->');
+    console.log('Game : START : -------------------------------------------->');  
+
+    let cword = this.state.cword;
+    cword.cellChanged(id, value);
+    this.storeSave(cword);
+    
+  }
+
+  onKeyUpPlayCell(ev) {
+
+    var elem = ev.currentTarget;
+    var id = elem.id;
+
+    console.log('Game : START : -------------------------------------------->');
+    console.log('Game : START : onKeyUpPlayCell ----> id : '+id+' ------------->');
     console.log('Game : START : -------------------------------------------->');  
 
     // let cword = this.state.cword;
@@ -364,8 +383,11 @@ class Game extends React.Component {
 
   onKeyDownPlayCell(ev) {
 
+    var elem = ev.currentTarget;
+    var id = elem.id;
+
     console.log('Game : START : -------------------------------------------->');
-    console.log('Game : START : onKeyDownPlayCell ----> '+ev+'------------->');
+    console.log('Game : START : onKeyDownPlayCell ----> id : '+id+' ------------->');
     console.log('Game : START : -------------------------------------------->');  
 
     // let cword = this.state.cword;
@@ -910,6 +932,7 @@ class Game extends React.Component {
         /> 
         <Play
           cword={ cword }
+          onClickPlayCell={ this.onClickPlayCell }
           onChangePlayCell={ this.onChangePlayCell }
           onKeyUpPlayCell={ this.onKeyUpPlayCell }
           onKeyDownPlayCell={ this.onKeyDownPlayCell }

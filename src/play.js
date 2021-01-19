@@ -46,6 +46,7 @@ class Play extends React.Component {
 
           <PlayBoard
             cword={ cword}
+            onClickPlayCell={ this.props.onClickPlayCell }
             onChangePlayCell={ this.props.onChangePlayCell }
             onKeyUpPlayCell={ this.props.onKeyUpPlayCell }
             onKeyDownPlayCell={ this.props.onKeyDownPlayCell }
