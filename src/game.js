@@ -209,13 +209,6 @@ class Game extends React.Component {
         if (cwObj != null) {    
           console.log('Game : setupNew : example case : not valid here');
 
-          // not valid here
-  
-          // // this is in storage format so convert back to cword format
-          // let cword = new Cword();
-          // cword.setupCwordFromStorageObject(cwObj);
-  
-          // this.storeSave(cword);
         } else {
           console.log('Game : setupNew : non example case');
   
@@ -239,7 +232,10 @@ class Game extends React.Component {
     this.msgMgr.clear(); 
 
     let cword = this.state.cword;
-    let name = cword.name;
+    let name = '';
+    if (cword != null) {
+      name = cword.name;
+    }
     let action = this.state.action;
     let existingNames = this.state.existingNames;
 
@@ -276,6 +272,9 @@ class Game extends React.Component {
 
     } else {
 
+      // message displayed before action chosen
+      this.setState({ msg: null,
+        updateTimestamp: Util.newDate() }); 
     }
   }
 
@@ -441,9 +440,8 @@ class Game extends React.Component {
     )
     .catch(
       err => {
-        console.log('Game : storeGet : catch : err as json : ...'+JSON.stringify(err)+'...');
-        console.log('Game : storeGet : catch : err as string : ...'+err+'...');
-        console.log('Game : storeGet : catch : err as err : ...'+err.message+'...'+err.stack+'...');
+        console.log('Game : storeGet : catch : err');
+        Util.showErr(err);
         this.resultGet(null, false, name);
       }
     ) 
@@ -469,7 +467,9 @@ class Game extends React.Component {
     )
     .catch(
       err => {
-        console.log('Game : storeDelete : catch : err = ...'+JSON.stringify(err)+'...');
+
+        console.log('Game : storeDelete : catch : err');
+        Util.showErr(err);
         this.resultDelete(false, cword);
       }
     ) 
@@ -512,7 +512,10 @@ class Game extends React.Component {
       )
       .catch(
         err => {
-          console.log('Game : storeSave : catch : err : ...'+JSON.stringify(err)+'...');
+
+          console.log('Game : storeSave : catch : err');
+          Util.showErr(err);
+
           this.resultSave(false);
         }
       ) 
@@ -542,7 +545,8 @@ class Game extends React.Component {
     )
     .catch(
       err => {
-        console.log('Game : storeInsert : catch : err : ...'+JSON.stringify(err)+'...');
+        console.log('Game : storeInsert : catch : err');
+        Util.showErr(err);
         this.resultInsert(cwObj, false);
       }
     )  
@@ -572,7 +576,8 @@ class Game extends React.Component {
     )
     .catch(
       err => {
-        console.log('Game : storeUpdate : catch : err = ...'+JSON.stringify(err)+'...');
+        console.log('Game : storeUpdate : catch : err');
+        Util.showErr(err);
         this.resultUpdate(cwObj, false);
       }
     )  
@@ -588,7 +593,7 @@ class Game extends React.Component {
       )
       .then(
         data => {
-          console.log('Game : storeGetNames : fetch : data : ...'+JSON.stringify(data)+'...');
+          console.log('Game : storeGetNames : fetch : data : ...'+Util.shorten(JSON.stringify(data),200)+'...');
   
           let names = [];
           for (let i=0; i<data.length; i++) {
@@ -602,8 +607,9 @@ class Game extends React.Component {
       )
       .catch(
         err => {
-          console.log('Game : storeGetNames : catch : err : ...'+JSON.stringify(err)+'...');
-          this.msgMgr.addError('Get crossword names failed');
+
+          console.log('Game : storeGetNames : catch : err');
+          Util.showErr(err);
 
           this.resultGetNames(false, []);
 
@@ -613,7 +619,6 @@ class Game extends React.Component {
 
   // result methods, called:
   // - after store methods 
-  // - ??? after build grid/clues methods ???
   // - set the updateTimestamp here, which forces re-render
   // CAN CHANGE STATE  
 
@@ -740,25 +745,6 @@ class Game extends React.Component {
       let cword = new Cword();
 
       cword.setupCwordFromStorageObject(cwObj);
-      // // let maxAcross = 1 * cwObj.maxAcross;
-      // // console.log('maxAcross : ['+maxAcross+']');
-      // // let maxDown = 1 * cwObj.maxDown;
-      // // console.log('maxDown : ['+maxDown+']');
-
-      // let size = Util.size(cwObj.maxAcross, cwObj.maxDown);
-
-      // let blanks = cwObj.blanks;
-      // console.log('blanks : ['+blanks+']');
-      // let horizClues = cwObj.horizClues;
-      // horizClues = Util.removeNewLines(horizClues); 
-      // console.log('horizClues : ['+horizClues+']');
-      // let vertClues = cwObj.vertClues;
-      // vertClues = Util.removeNewLines(vertClues); 
-      // console.log('vertClues : ['+vertClues+']');  
-      // let cellValues = cwObj.cellValues;
-      // console.log('cellValues : ['+cellValues+']'); 
-      // this.setState( { name: name, maxAcross: maxAcross, maxDown: maxDown, blanks: blanks,
-      // horizClues: horizClues, vertClues: vertClues, cellValues: cellValues} );
 
       let msg = null;
       if (action === Util.ACTION_PLAY) {
@@ -766,8 +752,6 @@ class Game extends React.Component {
       }
 
       this.setState( { 
-        // name: name, size: size, blanks: blanks,
-        // horizClues: horizClues, vertClues: vertClues, cellValues: cellValues,
         msg: msg,
         cword: cword,
         updateTimestamp: Util.newDate()} );
@@ -784,7 +768,6 @@ class Game extends React.Component {
       this.msgMgr.addInfo('Deleted crossword : '+name);
     }
     let msg = this.msgMgr.msg();
-    // set state since new render needed
     this.setState( {msg : msg, cword: cword, updateTimestamp: Util.newDate()} );
   }
 
@@ -1023,15 +1006,17 @@ class Game extends React.Component {
         <Init 
           existingNames={ this.state.existingNames }
           onChangeAction={ this.onChangeAction }
-        />         
+        />    
+        <Message         
+          msg={ this.state.msg }
+          onClickMessageClose={ this.onClickMessageClose }
+        />      
       </div>
     );
   }
 
   render() {
     
-    // console.log('Game : render : enter');
-    // console.log('Game : render : state : '+JSON.stringify(this.state));
     let action = this.state.action;
 
     let name = '';
@@ -1065,7 +1050,6 @@ class Game extends React.Component {
           console.log('Game : START : ------- CASE : Create/Name/Size -----> renderSetupNew'); 
           return this.renderSetupNew();
         }
-        // }
       }
     } else if (action === Util.ACTION_CREATE_EXAMPLE) {
       if (name === '') {
@@ -1108,71 +1092,7 @@ class Game extends React.Component {
     
   }
 
-  // util methods
-  // NEVER CHANGE STATE HERE
-  // only read state then either:
-  //  - return values
-  //  - call other methods
-
-  // toggleParamCell(cword, id) {
-  //   console.log('Game : toggleParamCell : enter : id : '+id);
-
-  //   // get the current state of cells
-  //   let cellMap = cword.cellMap;
-
-  //   // toggle the cell in cellMap : key is y.x
-
-  //   if (!cellMap.has(id)) {
-  //     // its a blank so make not a blank
-  //     let y = Util.row(id);
-  //     let x = Util.column(id);
-  //     let cell = new Cell(y, x);
-  //     cellMap.set(id, cell);
-  //   } else {
-  //     // its not a blank so make a blank 
-  //     cellMap.delete(id);
-  //   }
-
-  //   return cellMap;
-  // }
-
-  // setupNew(cword) {
-  //   console.log('Game : setupNew : enter');
-  //   let name = cword.name;
-
-  //   let existingNames = this.state.existingNames;
-    
-  //   if (!Util.isValidName(name)) {
-  //     this.msgMgr.addError('Invalid name');
-  //     this.setState({ 
-  //       msg : this.msgMgr.msg() , updateTimestamp: Util.newDate()
-  //     });
-
-  //   } else if (Util.isDuplicateName(existingNames, name)) {
-  //     this.msgMgr.addError('Duplicate name');
-  //     this.setState({ 
-  //       msg : this.msgMgr.msg() , updateTimestamp: Util.newDate()
-  //     });
-  //   } else {
-
-  //     let cwObj = Util.EXAMPLE_MAP.get(name);
-  //     if (cwObj != null) {    
-  //       console.log('Game : setupNew : example case');
-
-  //       // this is in storage format so convert back to cword format
-  //       let cword = new Cword();
-  //       cword.setupCwordFromStorageObject(cwObj);
-
-  //       this.storeSave(cword);
-  //     } else {
-  //       console.log('Game : setupNew : non example case');
-
-  //       // all empty on creation
-
-  //       this.storeSave(cword);
-  //     }
-  //   }
-  // }
+  
 }
 
 export default Game;

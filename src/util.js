@@ -387,3 +387,21 @@ export const formatNum = (n) => {
   }
 }
 
+export const shorten = (s, n) => {
+  if (s == null) {
+    return null;
+  }
+  let len = s.length;
+  if (len > n) {
+    let diff = len - n ;
+    s = s.substring(0, n)+' ... ('+diff+' more)';
+  }
+  return s;
+}
+
+export const showErr = (err) => {
+  console.log('err as json : ...'+JSON.stringify(err)+'...');
+  console.log('err as string : ...'+err+'...');
+  console.log('err as err : ...'+err.message+'...'+err.stack+'...');
+}
+
