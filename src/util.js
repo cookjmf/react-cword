@@ -154,6 +154,10 @@ HEADER_MAP.set(7, HEADER_7);
 HEADER_MAP.set(15, HEADER_15);
 HEADER_MAP.set(20, HEADER_20);
 
+export const COLOR_ORANGE = '#FFE1A4';
+export const COLOR_YELLOW = 'yellow';
+export const COLOR_NONE = 'transparent';
+
 // ---- functions ----
 
 export const toCellId = (y, x) => {

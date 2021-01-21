@@ -344,7 +344,11 @@ class Game extends React.Component {
     console.log('Game : START : onClickPlayCell ----> id: '+id+' ------------->');
     console.log('Game : START : -------------------------------------------->');  
 
-    
+    let cword = this.state.cword;
+    cword.cellClicked(id);
+
+    this.setState({ msg: null, cword: cword,
+      updateTimestamp: Util.newDate() }); 
 
   }
 
@@ -728,7 +732,6 @@ class Game extends React.Component {
     } );
   }
 
-  // note: not used yet
   resultGet(cwObj, ok, name) {
     console.log('Game : resultGet : enter');
 
@@ -777,7 +780,7 @@ class Game extends React.Component {
   renderCreate() {
     // chose create, show name, size
     console.log('Game : renderCreate : enter');
-    console.log('Game : renderCreate : state : '+JSON.stringify(this.state));
+    // console.log('Game : renderCreate : state : '+JSON.stringify(this.state));
     return (
       <div className="game">   
         <Init 
@@ -801,7 +804,7 @@ class Game extends React.Component {
   renderCreateExample() {
     // chose create, show name
     console.log('Game : renderCreateExample : enter');
-    console.log('Game : renderCreateExample : state : '+JSON.stringify(this.state));
+    // console.log('Game : renderCreateExample : state : '+JSON.stringify(this.state));
     return (
       <div className="game">   
         <Init 
@@ -823,7 +826,7 @@ class Game extends React.Component {
   renderCreateWithName() {
     // chose create, entered name, get size
     console.log('Game : renderCreateWithName : enter');
-    console.log('Game : renderCreateWithName : state : '+JSON.stringify(this.state));
+    // console.log('Game : renderCreateWithName : state : '+JSON.stringify(this.state));
 
     let cword = this.state.cword;
 
@@ -851,7 +854,7 @@ class Game extends React.Component {
 
   renderMessage() {
     console.log('Game : renderMessage : enter');
-    console.log('Game : renderMessage : state : '+JSON.stringify(this.state));
+    // console.log('Game : renderMessage : state : '+JSON.stringify(this.state));
     return (
       <div className="game"> 
         <Message         
@@ -865,7 +868,7 @@ class Game extends React.Component {
   renderSetupNew() {
     // chose create, entered name, chose size
     console.log('Game : renderSetupNew : enter');
-    console.log('Game : renderSetupNew : state : '+JSON.stringify(this.state));
+    // console.log('Game : renderSetupNew : state : '+JSON.stringify(this.state));
 
     let cword = this.state.cword;
 
@@ -894,9 +897,9 @@ class Game extends React.Component {
   }
 
   renderPlayWithName() {
-    // chose play
-    console.log('Game : renderPlay : enter');
-    console.log('Game : renderPlay : state : '+JSON.stringify(this.state));
+    // chose play and name
+    console.log('Game : renderPlayWithName : enter');
+    // console.log('Game : renderPlay : state : '+JSON.stringify(this.state));
 
     let cword = this.state.cword;
 
@@ -929,7 +932,7 @@ class Game extends React.Component {
   renderPlay() {
     // chose play
     console.log('Game : renderPlay : enter');
-    console.log('Game : renderPlay : state : '+JSON.stringify(this.state));
+    // console.log('Game : renderPlay : state : '+JSON.stringify(this.state));
 
     return (
       <div className="game"> 
@@ -973,7 +976,7 @@ class Game extends React.Component {
   renderMessageAfterAction() {
     // chose delete / createExample
     console.log('Game : renderMessageAfterAction : enter');
-    console.log('Game : renderMessageAfterAction : state : '+JSON.stringify(this.state));
+    // console.log('Game : renderMessageAfterAction : state : '+JSON.stringify(this.state));
 
     let name = '';
     if (this.state.cword != null) {
@@ -1000,7 +1003,7 @@ class Game extends React.Component {
 
   renderInit() {
     console.log('Game : renderInit : enter');
-    console.log('Game : renderInit : state : '+JSON.stringify(this.state));
+    // console.log('Game : renderInit : state : '+JSON.stringify(this.state));
     return (
       <div className="game">   
         <Init 

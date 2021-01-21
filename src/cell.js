@@ -23,6 +23,8 @@ import * as Util from './util';
   dataIdo : the css id of next input cell down
   dataIle : the css id of next input cell left
   dataIri : the css id of next input cell right
+
+  bgColor: background color
 */
 
 class Cell {
@@ -50,6 +52,8 @@ class Cell {
     this.dataIdo = '';
     this.dataIle = '';
     this.dataIre = '';
+
+    this.bgColor = Util.COLOR_NONE;
   }
 
   toId() {

@@ -20,12 +20,21 @@ class PlayCell extends React.Component {
     );
   }
 
-  renderNormalCell(id, val, onClick, onChange, onKeyUp, onKeyDown) {
+  renderNormalCell(id, cell, onClick, onChange, onKeyUp, onKeyDown) {
     // console.log('PlayCell : renderInput : id : '+id);  
+
+    let val = cell.value;
+    let bgColor = cell.bgColor;
+
+    const style1 = {
+      'backgroundColor': bgColor
+    };
+
     return (
       <>
         <input id={id} className="cw-item" name={id} key={id} type='text' 
           minLength='1' maxLength='1' value={val}
+          style={style1}
           onClick={(ev) => onClick(ev)}
           onChange={(ev) => onChange(ev)}
           onKeyUp={(ev) => onKeyUp(ev)}
@@ -48,7 +57,6 @@ class PlayCell extends React.Component {
   }
 
   renderCell(boardArrayKey, cword, onClick, onChange, onKeyUp, onKeyDown) {
-    // console.log('PlayCell : renderCell : enter : boardArrayKey : '+boardArrayKey);
 
     let cellMap = cword.cellMap;
 
@@ -77,18 +85,18 @@ class PlayCell extends React.Component {
       let yVal = y-1; 
       let cellKey = Util.cellKey(yVal,xVal);
       id = Util.toCellId(yVal, xVal);
-      let val = '';
+      // let val = '';
       let isBlank = true;
-
+      let cell = null;
       if (cellMap.has(cellKey)) {
         isBlank = false;
-        let cell = cellMap.get(cellKey);
-        val = cell.value;
+        cell = cellMap.get(cellKey);
+        // val = cell.value;
       }
       if (isBlank) {
         return this.renderBlankCell(id);
       } else {
-        return this.renderNormalCell(id, val, onClick, onChange, onKeyUp, onKeyDown);
+        return this.renderNormalCell(id, cell, onClick, onChange, onKeyUp, onKeyDown);
       } 
     }
   }

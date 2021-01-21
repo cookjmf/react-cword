@@ -123,6 +123,7 @@ class Cword {
     this.horizClues = cwObj.horizClues;
     this.vertClues = cwObj.vertClues;
     this.setupCellMap(cwObj.maxAcross, cwObj.maxDown, cwObj.blanks, cwObj.cellValues);
+
   }
 
   setupCellMap(maxAcross, maxDown, blanks, cellValues) {
@@ -997,9 +998,9 @@ class Cword {
     } 
 
     var acrossClue = cell.acrossClue;
-    var acrossLabel = '0';
-    var nextAcrossLabel = '0';
-    var prevAcrossLabel = '0';
+    var acrossLabel = 0;
+    var nextAcrossLabel = 0;
+    var prevAcrossLabel = 0;
     if (acrossClue != null) {
       acrossLabel = acrossClue.getLabel();
       var nextAcrossClue = this.getNextAcrossClue(acrossClue);
@@ -1013,9 +1014,9 @@ class Cword {
     }
 
     var downClue = cell.downClue;
-    var downLabel = '0';
-    var nextDownLabel = '0';
-    var prevDownLabel = '0';
+    var downLabel = 0;
+    var nextDownLabel = 0;
+    var prevDownLabel = 0;
     if (downClue != null) {
       downLabel = downClue.getLabel();
       var nextDownClue = this.getNextDownClue(downClue);
@@ -1028,16 +1029,16 @@ class Cword {
       }
     }
 
-    this.dataCac = acrossLabel;
-    this.dataNac = nextAcrossLabel;
-    this.dataPac = prevAcrossLabel;
-    this.dataCdo = downLabel;
-    this.dataNdo = nextDownLabel;
-    this.dataPdo = prevDownLabel;
-    this.dataIup = upId;
-    this.dataIdo = downId;
-    this.dataIle = leftId;
-    this.dataIri = rightId; 
+    cell.dataCac = acrossLabel;
+    cell.dataNac = nextAcrossLabel;
+    cell.dataPac = prevAcrossLabel;
+    cell.dataCdo = downLabel;
+    cell.dataNdo = nextDownLabel;
+    cell.dataPdo = prevDownLabel;
+    cell.dataIup = upId;
+    cell.dataIdo = downId;
+    cell.dataIle = leftId;
+    cell.dataIri = rightId; 
   }
 
   getActiveCellDown(cell, n) {
@@ -1463,6 +1464,9 @@ class Cword {
   }
 
   isCellSelected(cell) {
+    if (cell == null) {
+      return false;
+    }
     let selKey = '';
     if (this.cellSelected != null) {
       selKey = this.cellSelected.toId();
@@ -1474,6 +1478,9 @@ class Cword {
   }
 
   isClueSelected(clue) {
+    if (clue == null) {
+      return false;
+    }
     let selKey = '';
     if (this.clueSelected != null) {
       selKey = this.clueSelected.uniqLocation();
@@ -1486,6 +1493,16 @@ class Cword {
 
   cellChanged(id, value) {
     let cellKey = Util.cellKeyFromCellId(id);
+    let cell = this.cellMap.get(cellKey);
+
+    cell.value = value;
+
+  }
+
+  cellClicked(id) {
+    let cellKey = Util.cellKeyFromCellId(id);
+
+    console.log('Clicked : '+id+'...'+cellKey);
     let cell = this.cellMap.get(cellKey);
     let acrossClue = cell.acrossClue
     let acrossSel = this.isClueSelected(acrossClue);
@@ -1507,8 +1524,75 @@ class Cword {
       this.clueSelected = downClue;
     }
 
-    cell.value = value;
+    console.log('ClueSelected : '+this.clueSelected.uniqLocation());
 
+    this.cellSelected = cell;
+
+    // calculate desired background colors
+    if (this.clueSelected.isAcross) {
+      this.handleClickAcross(cellKey);
+
+    } else {
+      this.handleClickDown(cellKey);
+    }
+  }
+
+  handleClickAcross(cellKey) {
+    // set bgColor for selected across clue
+    let maxAcross = this.getMaxAcross();
+    let maxDown = this.getMaxAcross();
+    let cell = this.cellMap.get(cellKey);
+    for (var y=1; y<=maxDown; y++) {
+      for (var x=1; x<=maxAcross; x++) {
+        var cellKey2 = Util.cellKey(y,x); 
+        var cell2 = this.cellMap.get(cellKey2);
+        if (cell2 == null) {
+          continue;
+        }
+        var cac2 = cell2.dataCac;
+        if (cell.dataCac === cac2) {
+          // same clue
+          if (cellKey === cellKey2) {
+            cell.bgColor = Util.COLOR_ORANGE;
+            console.log('Across: set BG Orange for cell : '+cellKey2);
+          } else {
+            cell.bgColor = Util.COLOR_YELLOW;
+            console.log('Across: set BG Yellow for cell : '+cellKey2);
+          }
+        } else {
+          cell.bgColor = Util.COLOR_NONE;
+        }
+      }
+    }
+  }
+
+  handleClickDown(cellKey) {
+    // set bgColor for selected down clue
+    let maxAcross = this.getMaxAcross();
+    let maxDown = this.getMaxAcross();
+    let cell = this.cellMap.get(cellKey);
+    for (var y=1; y<=maxDown; y++) {
+      for (var x=1; x<=maxAcross; x++) {
+        var cellKey2 = Util.cellKey(y,x); 
+        var cell2 = this.cellMap.get(cellKey2);
+        if (cell2 == null) {
+          continue;
+        }
+        var cdo2 = cell2.dataCdo;
+        if (cell.dataCdo === cdo2) {
+          // same down clue
+          if (cellKey === cellKey2) {
+            cell.bgColor = Util.COLOR_ORANGE;
+            console.log('Down: set BG Orange for cell : '+cellKey2);
+          } else {
+            cell.bgColor = Util.COLOR_YELLOW;
+            console.log('Down: set BG Yellow for cell : '+cellKey2);
+          }
+        } else {
+          cell.bgColor = Util.COLOR_NONE;
+        }
+      }
+    }
   }
 
 }
