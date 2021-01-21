@@ -1038,6 +1038,8 @@ class Game extends React.Component {
     console.log('Game : START : -------------------------------------------->'); 
 
 
+
+
     if (action === Util.ACTION_CREATE) {
       if (name === '') {
         // name + size to be chosen

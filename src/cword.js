@@ -1535,6 +1535,7 @@ class Cword {
     } else {
       this.handleClickDown(cellKey);
     }
+
   }
 
   handleClickAcross(cellKey) {
@@ -1553,14 +1554,14 @@ class Cword {
         if (cell.dataCac === cac2) {
           // same clue
           if (cellKey === cellKey2) {
-            cell.bgColor = Util.COLOR_ORANGE;
+            cell2.bgColor = Util.COLOR_ORANGE;
             console.log('Across: set BG Orange for cell : '+cellKey2);
           } else {
-            cell.bgColor = Util.COLOR_YELLOW;
+            cell2.bgColor = Util.COLOR_YELLOW;
             console.log('Across: set BG Yellow for cell : '+cellKey2);
           }
         } else {
-          cell.bgColor = Util.COLOR_NONE;
+          cell2.bgColor = Util.COLOR_NONE;
         }
       }
     }
@@ -1582,14 +1583,43 @@ class Cword {
         if (cell.dataCdo === cdo2) {
           // same down clue
           if (cellKey === cellKey2) {
-            cell.bgColor = Util.COLOR_ORANGE;
+            cell2.bgColor = Util.COLOR_ORANGE;
             console.log('Down: set BG Orange for cell : '+cellKey2);
           } else {
-            cell.bgColor = Util.COLOR_YELLOW;
+            cell2.bgColor = Util.COLOR_YELLOW;
             console.log('Down: set BG Yellow for cell : '+cellKey2);
           }
         } else {
-          cell.bgColor = Util.COLOR_NONE;
+          cell2.bgColor = Util.COLOR_NONE;
+        }
+      }
+    }
+  }
+
+  // debug only
+  showColors() {
+    let maxAcross = this.getMaxAcross();
+    let maxDown = this.getMaxAcross();
+    for (var y=1; y<=maxDown; y++) {
+      for (var x=1; x<=maxAcross; x++) {
+        var cellKey = Util.cellKey(y,x); 
+        var cell = this.cellMap.get(cellKey);
+        if (cell == null) {
+          continue;
+        }
+        var bgColor = cell.bgColor;
+        if (bgColor != null) {
+          if (bgColor === Util.COLOR_ORANGE) {
+            console.log('BG Orange : '+cellKey);
+          } else if (bgColor === Util.COLOR_YELLOW) {
+            console.log('BG Yellow : '+cellKey);
+          } else if (bgColor === Util.COLOR_NONE) {
+            console.log('BG None : '+cellKey);
+          } else {
+            console.log('BG ...'+bgColor+'... : '+cellKey);
+          }
+        } else {
+          console.log('BG null : '+cellKey);
         }
       }
     }

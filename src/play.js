@@ -18,8 +18,6 @@ class Play extends React.Component {
     // console.log('Play : render : enter');
 
     let cword = this.props.cword;
-    
-    // let size = cword.size;
 
     let na = cword.getNumberedMaxAcross();
     let nd = cword.getNumberedMaxDown();
