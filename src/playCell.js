@@ -20,21 +20,25 @@ class PlayCell extends React.Component {
     );
   }
 
-  renderNormalCell(id, cell, onClick, onChange, onKeyUp, onKeyDown) {
+  renderNormalCell(id, cell, updateTimestamp, onClick, onChange, onKeyUp, onKeyDown) {
     // console.log('PlayCell : renderInput : id : '+id);  
 
     let val = cell.value;
-    let bgColor = cell.bgColor;
+   
+    let name = id+'-'+updateTimestamp;
 
-    const style1 = {
-      'backgroundColor': bgColor
-    };
+    // BG COLOR IS IN PlayCellBg
+    
+    //  let bgColor = cell.bgColor;
+    // const style1 = {
+    //   'backgroundColor': bgColor
+    // };
+    // style={style1}
 
     return (
       <>
-        <input id={id} className="cw-item" name={id} key={id} type='text' 
+        <input id={id} className="cw-item" name={name} key={id} type='text' 
           minLength='1' maxLength='1' value={val}
-          style={style1}
           onClick={(ev) => onClick(ev)}
           onChange={(ev) => onChange(ev)}
           onKeyUp={(ev) => onKeyUp(ev)}
@@ -56,7 +60,7 @@ class PlayCell extends React.Component {
     );
   }
 
-  renderCell(boardArrayKey, cword, onClick, onChange, onKeyUp, onKeyDown) {
+  renderCell(boardArrayKey, cword, updateTimestamp,onClick, onChange, onKeyUp, onKeyDown) {
 
     let cellMap = cword.cellMap;
 
@@ -96,7 +100,7 @@ class PlayCell extends React.Component {
       if (isBlank) {
         return this.renderBlankCell(id);
       } else {
-        return this.renderNormalCell(id, cell, onClick, onChange, onKeyUp, onKeyDown);
+        return this.renderNormalCell(id, cell, updateTimestamp, onClick, onChange, onKeyUp, onKeyDown);
       } 
     }
   }
@@ -107,6 +111,7 @@ class PlayCell extends React.Component {
     // key is "special", even though its been passed in - it does not show in props !!
 
     let cword = this.props.cword;
+    let updateTimestamp= this.props.updateTimestamp;
 
     let boardArrayKey = this.props.boardArrayKey;
     if (boardArrayKey == null) {
@@ -122,7 +127,7 @@ class PlayCell extends React.Component {
 
       return (
         <>
-        {this.renderCell(boardArrayKey, cword, onClick, onChange, onKeyUp, onKeyDown)}
+        {this.renderCell(boardArrayKey, cword, updateTimestamp, onClick, onChange, onKeyUp, onKeyDown)}
         </>
       );
     }

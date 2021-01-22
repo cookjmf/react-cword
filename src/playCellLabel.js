@@ -9,7 +9,7 @@ class PlayCellLabel extends React.Component {
     this.state = {};
   }
 
-  renderCell(boardArrayKey, cellMap) {
+  renderCell(boardArrayKey, cellMap, updateTimestamp) {
     // console.log('PlayCellLabel : renderCell : enter : boardArrayKey : '+boardArrayKey);
     let y = Util.row(boardArrayKey);
     let x = Util.column(boardArrayKey);
@@ -19,6 +19,7 @@ class PlayCellLabel extends React.Component {
     let label = cell.label;
     
     let id = 'label-'+label;
+    let name = id+'-'+updateTimestamp;
 
     // the 1 is needed for numbered grid
     let cellGridRow = y + 1;
@@ -31,7 +32,7 @@ class PlayCellLabel extends React.Component {
 
     return (
       <>
-        <span id={id} className="cw-label" name={id} key={id} 
+        <span id={id} className="cw-label" name={name} key={id} 
         style={style1}
         >
           <span className="cw-label-text">
@@ -48,6 +49,7 @@ class PlayCellLabel extends React.Component {
 
     // key is "special", even though its been passed in - it does not show in props !!
     let cword = this.props.cword;
+    let updateTimestamp= this.props.updateTimestamp;
     let cellMap = cword.cellMap;
     let boardArrayKey = this.props.boardArrayKey;
     if (boardArrayKey == null) {
@@ -57,7 +59,7 @@ class PlayCellLabel extends React.Component {
 
       return (
         <>
-        {this.renderCell(boardArrayKey, cellMap)}
+        {this.renderCell(boardArrayKey, cellMap, updateTimestamp)}
         </>
       );
     }

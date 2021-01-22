@@ -9,30 +9,48 @@ class PlayCellBg extends React.Component {
     this.state = {};
   }
 
-  renderCell(boardArrayKey) {
+  renderCell(boardArrayKey, cword, updateTimestamp) {
     // console.log('PlayCellBg : renderCell : enter : boardArrayKey : '+boardArrayKey);
     let y = Util.row(boardArrayKey);
     let x = Util.column(boardArrayKey);
-    
-    let id = 'itembg-'+Util.toCellId(y, x);
 
-    // the 1 is needed for numbered grid
-    let cellGridRow = y + 1;
-    let cellGridColumn = x + 1;
+    let cellKey = Util.cellKey(y,x);
+    let cellMap = cword.cellMap;
+    let cell = cellMap.get(cellKey);
 
-    let style1 = {
-      gridColumn: cellGridColumn,
-      gridRow: cellGridRow,
+    if (cell == null) {
+      return (
+        <>
+        </>   
+      );
+    } else {
+
+      let bgColor = cell.bgColor;
+      
+      let id = 'itembg-'+Util.toCellId(y, x);
+
+      let name = id+'-'+updateTimestamp;
+
+      // the 1 is needed for numbered grid
+      let cellGridRow = y + 1;
+      let cellGridColumn = x + 1;
+
+      let style1 = {
+        'gridColumn': cellGridColumn,
+        'gridRow': cellGridRow,
+        'backgroundColor': bgColor
+      }
+
+      return (
+        <>
+          <span id={id} className="cw-itembg" name={name} key={id} 
+          style={style1}
+          >
+          </span>
+        </>   
+      );
+
     }
-
-    return (
-      <>
-        <span id={id} className="cw-itembg" name={id} key={id} 
-        style={style1}
-        >
-        </span>
-      </>   
-    );
     
   }
   
@@ -40,6 +58,9 @@ class PlayCellBg extends React.Component {
     // console.log('PlayCellBg : render : enter');
 
     // key is "special", even though its been passed in - it does not show in props !!
+
+    let cword = this.props.cword;
+    let updateTimestamp= this.props.updateTimestamp;
 
     let boardArrayKey = this.props.boardArrayKey;
     if (boardArrayKey == null) {
@@ -49,7 +70,7 @@ class PlayCellBg extends React.Component {
 
       return (
         <>
-        {this.renderCell(boardArrayKey)}
+        {this.renderCell(boardArrayKey, cword, updateTimestamp)}
         </>
       );
     }

@@ -902,6 +902,7 @@ class Game extends React.Component {
     // console.log('Game : renderPlay : state : '+JSON.stringify(this.state));
 
     let cword = this.state.cword;
+    let updateTimestamp = this.state.updateTimestamp;
 
     return (
       <div className="game"> 
@@ -918,6 +919,7 @@ class Game extends React.Component {
         /> 
         <Play
           cword={ cword }
+          updateTimestamp={ updateTimestamp }
           onClickPlayCell={ this.onClickPlayCell }
           onChangePlayCell={ this.onChangePlayCell }
           onKeyUpPlayCell={ this.onKeyUpPlayCell }
@@ -1036,9 +1038,6 @@ class Game extends React.Component {
     console.log('Game : START : ------- name : '+name+' ------------------------------------->');
     console.log('Game : START : ------- size : '+size+' ------------------------------------->');
     console.log('Game : START : -------------------------------------------->'); 
-
-
-
 
     if (action === Util.ACTION_CREATE) {
       if (name === '') {

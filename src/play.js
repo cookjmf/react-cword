@@ -43,7 +43,8 @@ class Play extends React.Component {
         <div id="cw-board" className={boardClassName}>
 
           <PlayBoard
-            cword={ cword}
+            cword={ cword}            
+            updateTimestamp={ this.props.updateTimestamp }
             onClickPlayCell={ this.props.onClickPlayCell }
             onChangePlayCell={ this.props.onChangePlayCell }
             onKeyUpPlayCell={ this.props.onKeyUpPlayCell }
@@ -55,6 +56,7 @@ class Play extends React.Component {
 
             <PlayBoardBg
               cword={ cword}
+              updateTimestamp={ this.props.updateTimestamp }
             >
             </PlayBoardBg>
 
@@ -64,6 +66,7 @@ class Play extends React.Component {
 
             <PlayBoardLabel
               cword={ cword}
+              updateTimestamp={ this.props.updateTimestamp }
             >
             </PlayBoardLabel>
 
