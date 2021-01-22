@@ -19,7 +19,11 @@ class PlayCellLabel extends React.Component {
     let label = cell.label;
     
     let id = 'label-'+label;
-    let name = id+'-'+updateTimestamp;
+
+    let name = id;
+    if (Util.layerDebug) {
+      name = id+'-'+updateTimestamp;
+    }
 
     // the 1 is needed for numbered grid
     let cellGridRow = y + 1;

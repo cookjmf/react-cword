@@ -409,3 +409,9 @@ export const showErr = (err) => {
   console.log('err as err : ...'+err.message+'...'+err.stack+'...');
 }
 
+export const layerDebug = () => {
+  // debugging flag to force all the Play cell layers (input, label, bg) to be
+  // updated in the DOM every time the Play is re-rendered.
+  // works by appending updateTimestamp to the name of each component.
+  return false;
+}

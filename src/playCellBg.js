@@ -29,7 +29,10 @@ class PlayCellBg extends React.Component {
       
       let id = 'itembg-'+Util.toCellId(y, x);
 
-      let name = id+'-'+updateTimestamp;
+      let name = id;
+      if (Util.layerDebug) {
+        name = id+'-'+updateTimestamp;
+      }
 
       // the 1 is needed for numbered grid
       let cellGridRow = y + 1;

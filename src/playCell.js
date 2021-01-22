@@ -25,10 +25,13 @@ class PlayCell extends React.Component {
 
     let val = cell.value;
    
-    let name = id+'-'+updateTimestamp;
+    let name = id;
+    if (Util.layerDebug) {
+      name = id+'-'+updateTimestamp;
+    }
 
     // BG COLOR IS IN PlayCellBg
-    
+
     //  let bgColor = cell.bgColor;
     // const style1 = {
     //   'backgroundColor': bgColor
