@@ -7,8 +7,28 @@ class PlayCell extends React.Component {
     
     super(props);
     this.state = {};
+    this.textInput = React.createRef();
   }
-  
+
+  componentDidUpdate() {
+
+    let elem = this.textInput.current;   
+    if (elem != null) {
+      let boardArrayKey = this.props.boardArrayKey;
+      let y = Util.row(boardArrayKey);
+      let x = Util.column(boardArrayKey);
+      let xVal = x-1;
+      let yVal = y-1; 
+      let cellKey = Util.cellKey(yVal,xVal);
+      let cword = this.props.cword;
+      let cellMap = cword.cellMap;
+      let cell = cellMap.get(cellKey);
+      if (cword.isSelectedCell(cell)) { 
+        elem.focus();
+      } 
+    } 
+  }
+
   renderNumber(id, cls, val) {
     // console.log('PlayCell : renderNumber : id : '+id);
     return (
@@ -21,27 +41,19 @@ class PlayCell extends React.Component {
   }
 
   renderNormalCell(id, cell, updateTimestamp, onClick, onChange, onKeyUp, onKeyDown) {
-    // console.log('PlayCell : renderInput : id : '+id);  
-
+  
     let val = cell.value;
    
     let name = id;
     if (Util.layerDebug) {
       name = id+'-'+updateTimestamp;
     }
-
-    // BG COLOR IS IN PlayCellBg
-
-    //  let bgColor = cell.bgColor;
-    // const style1 = {
-    //   'backgroundColor': bgColor
-    // };
-    // style={style1}
-
+  
     return (
       <>
         <input id={id} className="cw-item" name={name} key={id} type='text' 
           minLength='1' maxLength='1' value={val}
+          ref={ this.textInput }
           onClick={(ev) => onClick(ev)}
           onChange={(ev) => onChange(ev)}
           onKeyUp={(ev) => onKeyUp(ev)}
@@ -50,6 +62,8 @@ class PlayCell extends React.Component {
         </input>
       </>   
     );
+    
+    
   }
 
   renderBlankCell(id) {

@@ -59,6 +59,20 @@ class Clue {
     }
     return k;
   }
+
+  getFrid() {
+    var d = '';
+    if (this.isAcross) {
+      d = 'a.'+this.y+'.'+this.n;
+    } else {
+      d = 'd.'+this.x+'.'+this.n;
+    }
+    return d;
+  }
+
+  getSelectedText() {
+    return this.getLabel() +'. ( '+this.getFrid()+' ) '+this.text+' ('+this.answerLen+')';
+  }
 }
 
 export default Clue;

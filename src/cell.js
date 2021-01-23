@@ -59,6 +59,10 @@ class Cell {
   toId() {
     return Util.toCellId(this.y, this.x);
   }
+
+  getKey() {
+    return Util.cellKey(this.y, this.x);
+  }
 }
 
 export default Cell;

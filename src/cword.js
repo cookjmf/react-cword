@@ -1061,7 +1061,7 @@ class Cword {
         newY = 1;
       }
   
-      var newKey = x+'.'+newY;
+      var newKey = Util.cellKey(newY, x);
               
       cell2 = this.cellMap.get(newKey);
       if (cell2 != null) {
@@ -1093,7 +1093,7 @@ class Cword {
       if (newX > maxAcross) {
         newX = 1;
       }
-      var newKey = newX+'.'+y;
+      var newKey = Util.cellKey(y,newX);
               
       cell2 = this.cellMap.get(newKey);
       if (cell2 != null) {
@@ -1463,13 +1463,13 @@ class Cword {
     return list;
   }
 
-  isCellSelected(cell) {
+  isSelectedCell(cell) {
     if (cell == null) {
       return false;
     }
     let selKey = '';
-    if (this.cellSelected != null) {
-      selKey = this.cellSelected.toId();
+    if (this.selectedCell != null) {
+      selKey = this.selectedCell.toId();
     }
     if (cell.toId() === selKey) {
       return true;
@@ -1477,13 +1477,13 @@ class Cword {
     return false;
   }
 
-  isClueSelected(clue) {
+  isSelectedClue(clue) {
     if (clue == null) {
       return false;
     }
     let selKey = '';
-    if (this.clueSelected != null) {
-      selKey = this.clueSelected.uniqLocation();
+    if (this.selectedClue != null) {
+      selKey = this.selectedClue.uniqLocation();
     }
     if (clue.uniqLocation() === selKey) {
       return true;
@@ -1504,32 +1504,39 @@ class Cword {
 
     console.log('Clicked : '+id+'...'+cellKey);
     let cell = this.cellMap.get(cellKey);
-    let acrossClue = cell.acrossClue
-    let acrossSel = this.isClueSelected(acrossClue);
+    
+    this.makeCurrentCell(cell);
+  }
+
+  makeCurrentCell(cell) {
+
+    let cellKey = cell.getKey();
+    let acrossClue = cell.acrossClue;
+    let acrossSel = this.isSelectedClue(acrossClue);
 
     let downClue = cell.downClue
-    // let downSel = this.isClueSelected(downClue);
+    // let downSel = this.isSelectedClue(downClue);
 
     if (acrossClue != null) {
       if (downClue != null) {
         if (acrossSel) {
-          this.clueSelected = downClue;
+          this.selectedClue = downClue;
         } else {
-          this.clueSelected = acrossClue;
+          this.selectedClue = acrossClue;
         }
       } else {
-        this.clueSelected = acrossClue;
+        this.selectedClue = acrossClue;
       }
     } else {
-      this.clueSelected = downClue;
+      this.selectedClue = downClue;
     }
 
-    console.log('ClueSelected : '+this.clueSelected.uniqLocation());
+    console.log('selectedClue : '+this.selectedClue.uniqLocation());
 
-    this.cellSelected = cell;
+    this.selectedCell = cell;
 
     // calculate desired background colors
-    if (this.clueSelected.isAcross) {
+    if (this.selectedClue.isAcross) {
       this.handleClickAcross(cellKey);
 
     } else {
@@ -1623,6 +1630,95 @@ class Cword {
         }
       }
     }
+  }
+
+  keyUpPlayCell(ev) {
+    var elem = ev.currentTarget;
+    var id = elem.id;
+    var keyev = ev.key;
+    var key = ev.keyCode;
+    // var charcode = ev.charCode;
+    let cellKey = Util.cellKeyFromCellId(id);
+    console.log('KeyUp : '+id+'...'+cellKey+'...'+keyev+'...'+key);
+    let cell = this.cellMap.get(cellKey);
+
+    if (keyev === 'ArrowUp') {
+      this.arrowUp(cell.dataIup);
+    } else if (keyev === 'ArrowDown') {
+      this.arrowUp(cell.dataIdo);
+    } else if (keyev === 'ArrowLeft') {
+      this.arrowUp(cell.dataIle);
+    } else if (keyev === 'ArrowRight') {
+      this.arrowUp(cell.dataIri);
+    } else if (key === 8) {      
+      cell.value = '';
+      this.letterUp(cell, -1);
+    } else if (key === 9) {
+      if (ev.shiftKey) {
+        this.tabUp(cell, -1);
+      } else {
+        this.tabUp(cell, 1);
+      }
+    } else if (key >= 65 && key <= 90) {
+      cell.value = ''+keyev;
+      this.letterUp(cell, 1);
+    } else {
+
+      // https://medium.com/@ericclemmons/react-event-preventdefault-78c28c950e46
+
+      ev.preventDefault();
+      return false;
+    }
+  }
+
+  letterUp(cell, disp) {
+    console.log('letterUp : '+cell.toId()+'...'+disp);
+  }
+
+  tabUp(cell, disp) {
+    console.log('tabUp : '+cell.toId()+'...'+disp);
+  }
+
+  arrowUp(nextId) {
+    console.log('arrowUp : next is : '+nextId);
+    let nextCellKey = Util.cellKeyFromCellId(nextId);
+    let nextCell = this.cellMap.get(nextCellKey);
+    this.makeCurrentCell(nextCell);
+  }
+
+  keyDownPlayCell(ev) {
+    var elem = ev.currentTarget;
+
+    var id = elem.id;
+    var keyev = ev.key;
+    var key = ev.keyCode;
+    // var charcode = ev.charCode;
+    let cellKey = Util.cellKeyFromCellId(id);
+    console.log('KeyDown : '+id+'...'+cellKey+'...'+keyev+'...'+key);
+ 
+    // if (key == 8) {
+      
+    // } else if (key == 9) {
+      
+    // } else if (key >= 65 && key <= 90) {
+      
+    // } else if (key >= 97 && key <= 122) {
+      
+    // } else {
+      
+    // }
+    ev.preventDefault();
+    
+    return false;
+    
+  }
+
+  acrossClueClicked(id) {
+    console.log('acrossClueClicked : '+id);
+  }
+
+  downClueClicked(id) {
+    console.log('downClueClicked : '+id);
   }
 
 }

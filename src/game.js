@@ -378,10 +378,13 @@ class Game extends React.Component {
     console.log('Game : START : onKeyUpPlayCell ----> id : '+id+' ------------->');
     console.log('Game : START : -------------------------------------------->');  
 
-    // let cword = this.state.cword;
-    // cword.toggleParamCell(id);
+    let cword = this.state.cword;
+    let result = cword.keyUpPlayCell(ev);
 
-    // this.storeSave(cword);
+    this.setState({ msg: null, cword: cword,
+      updateTimestamp: Util.newDate() }); 
+
+    return result;
   }
 
   onKeyDownPlayCell(ev) {
@@ -393,10 +396,13 @@ class Game extends React.Component {
     console.log('Game : START : onKeyDownPlayCell ----> id : '+id+' ------------->');
     console.log('Game : START : -------------------------------------------->');  
 
-    // let cword = this.state.cword;
-    // cword.toggleParamCell(id);
+    let cword = this.state.cword;
+    let result = cword.keyDownPlayCell(ev);
 
-    // this.storeSave(cword);
+    this.setState({ msg: null, cword: cword,
+      updateTimestamp: Util.newDate() }); 
+
+    return result;
   }
 
   onClickPlayAcrossClues(id) {
@@ -405,10 +411,12 @@ class Game extends React.Component {
     console.log('Game : START : onClickPlayAcrossClues ----> '+id+'------------->');
     console.log('Game : START : -------------------------------------------->');  
 
-    // let cword = this.state.cword;
-    // cword.toggleParamCell(id);
+    let cword = this.state.cword;
+    cword.acrossClueClicked(id);
 
-    // this.storeSave(cword);
+    this.setState({ msg: null, cword: cword,
+      updateTimestamp: Util.newDate() }); 
+
   }
 
   onClickPlayDownClues(id) {
@@ -417,10 +425,11 @@ class Game extends React.Component {
     console.log('Game : START : onClickPlayDownClues ----> '+id+'------------->');
     console.log('Game : START : -------------------------------------------->');  
 
-    // let cword = this.state.cword;
-    // cword.toggleParamCell(id);
+    let cword = this.state.cword;
+    cword.downClueClicked(id);
 
-    // this.storeSave(cword);
+    this.setState({ msg: null, cword: cword,
+      updateTimestamp: Util.newDate() }); 
   }
 
   // store methods

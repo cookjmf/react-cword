@@ -29,15 +29,24 @@ class Play extends React.Component {
     let bgClassName = boardClassName+" cw-itembgs";
     let labelClassName = boardClassName+" cw-labels";
 
-    const style1 = {
+    let style1 = {
       'display': 'none'
     };
+    let selectedClueText = "";
+    let selectedClue = cword.selectedClue;
+    if (selectedClue != null) {
+      style1 = {
+        'display': 'block'
+      };
+      selectedClueText = selectedClue.getSelectedText();
+    }
 
     return (
       <div id="cw-cont" className="cw-cont">
 
         <div id="cw-selclue" className="cw-clues-current"
         style={style1} >
+          {selectedClueText}
         </div>
 
         <div id="cw-board" className={boardClassName}>

@@ -406,7 +406,9 @@ export const shorten = (s, n) => {
 export const showErr = (err) => {
   console.log('err as json : ...'+JSON.stringify(err)+'...');
   console.log('err as string : ...'+err+'...');
-  console.log('err as err : ...'+err.message+'...'+err.stack+'...');
+  if (err != null) {
+    console.log('err as err : ...'+err.message+'...'+err.stack+'...');
+  }
 }
 
 export const layerDebug = () => {

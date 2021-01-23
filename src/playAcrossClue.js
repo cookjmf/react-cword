@@ -1,4 +1,5 @@
 import React from 'react';
+import * as Util from './util';
 
 class PlayAcrossClue extends React.Component {
 
@@ -28,13 +29,23 @@ class PlayAcrossClue extends React.Component {
 
     let ancText = clue.text+' ('+clue.answer.length+')';
 
+    let style1 = null;
+    if (cword.isSelectedClue(clue)) {
+      style1 = {
+        'backgroundColor': Util.COLOR_YELLOW
+      }
+    }
+    
+
     return (
       <>
       <div id={id} className="cw-clues-row">
       <span className="cw-clues-label">
       {labelText}
       </span>
-      <span id={id2} className="cw-clues-list-item cw-clues-list-across">
+      <span id={id2} className="cw-clues-list-item cw-clues-list-across"
+      style={style1}
+      >
       <a id={id3} className="cw-clues-link" href={href}
       onClick={(ev) => this.props.onClick(ev.target.id)}
       >
