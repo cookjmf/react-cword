@@ -448,14 +448,14 @@ class Game extends React.Component {
       data => {
         console.log('Game : storeGet : fetch : data : ...'+JSON.stringify(data)+'...');
         let cwObj = JSON.parse(data.contents)
-        this.resultGet(cwObj, true, name);
+        this.resultGet(cwObj, true, name, null);
       }
     )
     .catch(
       err => {
         console.log('Game : storeGet : catch : err');
         Util.showErr(err);
-        this.resultGet(null, false, name);
+        this.resultGet(null, false, name, err);
       }
     ) 
   }
@@ -475,7 +475,7 @@ class Game extends React.Component {
     .then(
       data => {
         console.log('Game : storeDelete : fetch : data = ...'+JSON.stringify(data)+'...');
-        this.resultDelete(true, cword);
+        this.resultDelete(true, cword, null);
       }
     )
     .catch(
@@ -483,7 +483,7 @@ class Game extends React.Component {
 
         console.log('Game : storeDelete : catch : err');
         Util.showErr(err);
-        this.resultDelete(false, cword);
+        this.resultDelete(false, cword, err);
       }
     ) 
   }
@@ -529,7 +529,7 @@ class Game extends React.Component {
           console.log('Game : storeSave : catch : err');
           Util.showErr(err);
 
-          this.resultSave(false);
+          this.resultSave(false, err);
         }
       ) 
     }  
@@ -553,14 +553,14 @@ class Game extends React.Component {
     .then(
       data => {
         console.log('Game : storeInsert : fetch : data : ...'+JSON.stringify(data)+'...');
-        this.resultInsert(cwObj, true);
+        this.resultInsert(cwObj, true, null);
       }
     )
     .catch(
       err => {
         console.log('Game : storeInsert : catch : err');
         Util.showErr(err);
-        this.resultInsert(cwObj, false);
+        this.resultInsert(cwObj, false, err);
       }
     )  
   }
@@ -584,14 +584,14 @@ class Game extends React.Component {
     .then(
       data => {
         console.log('Game : storeUpdate : fetch : data : ...'+JSON.stringify(data)+'...');
-        this.resultUpdate(cwObj, true);
+        this.resultUpdate(cwObj, true, null);
       }
     )
     .catch(
       err => {
         console.log('Game : storeUpdate : catch : err');
         Util.showErr(err);
-        this.resultUpdate(cwObj, false);
+        this.resultUpdate(cwObj, false, err);
       }
     )  
   }
@@ -614,7 +614,7 @@ class Game extends React.Component {
             let name = row.name;
             names.push(name);
           }
-          this.resultGetNames(true, names);
+          this.resultGetNames(true, names, null);
           
         }
       )
@@ -624,7 +624,7 @@ class Game extends React.Component {
           console.log('Game : storeGetNames : catch : err');
           Util.showErr(err);
 
-          this.resultGetNames(false, []);
+          this.resultGetNames(false, [], err);
 
         }
       )
@@ -635,10 +635,10 @@ class Game extends React.Component {
   // - set the updateTimestamp here, which forces re-render
   // CAN CHANGE STATE  
 
-  resultGetNames(ok, names) {
+  resultGetNames(ok, names, err) {
     console.log('Game : resultGetNames : enter');
     if (!ok) {
-      this.msgMgr.addError('Failed to get names.');
+      this.msgMgr.addError('Failed to get crossword names. '+err);
       let msg = this.msgMgr.msg();
       this.setState( { existingNames: names, 
         cword: null, action: '', 
@@ -652,7 +652,7 @@ class Game extends React.Component {
 
   }
 
-  resultSave(ok) {
+  resultSave(ok, err) {
     console.log('Game : resultSave : enter');
     let action = this.state.action;
     if (action === Util.ACTION_IMPORT) {
@@ -660,13 +660,13 @@ class Game extends React.Component {
     } else if (action === Util.ACTION_PLAY) {
       // resultSavePlay(ok);
     } else if (action === Util.ACTION_CREATE) {
-      this.resultCreateSave(ok);
+      this.resultCreateSave(ok, err);
     } else if (action === Util.ACTION_UPDATE) {
       // resultSaveUpdate(ok);
     }
   }
 
-  resultUpdate(cwObj, ok) {
+  resultUpdate(cwObj, ok, err) {
     console.log('Game : resultUpdate : enter');
     let action = this.state.action;
     if (action === Util.ACTION_IMPORT) {
@@ -674,13 +674,13 @@ class Game extends React.Component {
     } else if (action === Util.ACTION_PLAY) {
       // resultSavePlay(ok);
     } else if (action === Util.ACTION_CREATE) {
-      this.resultCreateUpdate(cwObj, ok);
+      this.resultCreateUpdate(cwObj, ok, err);
     } else if (action === Util.ACTION_UPDATE) {
       // resultSaveUpdate(ok);
     }
   }
 
-  resultInsert(cwObj, ok) {
+  resultInsert(cwObj, ok, err) {
     console.log('Game : resultInsert : enter');
     let action = this.state.action;
     if (action === Util.ACTION_IMPORT) {
@@ -688,21 +688,21 @@ class Game extends React.Component {
     } else if (action === Util.ACTION_PLAY) {
       // resultSavePlay(ok);
     } else if (action === Util.ACTION_CREATE) {
-      this.resultCreateInsert(cwObj, ok, false);
+      this.resultCreateInsert(cwObj, ok, false, err);
     } else if (action === Util.ACTION_CREATE_EXAMPLE) {
-      this.resultCreateInsert(cwObj, ok, true);
+      this.resultCreateInsert(cwObj, ok, true, err);
     } else if (action === Util.ACTION_UPDATE) {
       // resultSaveUpdate(ok);
     }
   }
 
-  resultCreateUpdate(cwObj, ok) {
+  resultCreateUpdate(cwObj, ok, err) {
     console.log('Game : resultCreateUpdate : enter');
     let name = cwObj.name;
     if (!ok) {
-      this.msgMgr.addError('Failed to save.');
+      this.msgMgr.addError('Failed to save crossword : '+name+' . '+err);
     } else {
-      this.msgMgr.addConfirmInfo( 'Updated : '+name+' at '+Util.date1(), "Validate" );
+      this.msgMgr.addConfirmInfo( 'Updated crossword : '+name+' at '+Util.date1(), "Validate" );
     }
     let msg = this.msgMgr.msg();
     this.setState( {
@@ -710,16 +710,20 @@ class Game extends React.Component {
     } );
   }
 
-  resultCreateInsert(cwObj, ok, isExample) {
+  resultCreateInsert(cwObj, ok, isExample, err) {
     console.log('Game : resultCreateInsert : enter');
     let name = cwObj.name;
     if (!ok) {
-      this.msgMgr.addError('Failed to save.');
+      if (isExample) {
+        this.msgMgr.addError('Failed to save example crossword : '+name+'. ' +err);
+      } else {
+        this.msgMgr.addError('Failed to save crossword : '+name+'. ' +err);
+      }
     } else {
       if (isExample) {
-        this.msgMgr.addInfo('Created example : '+name+'.');
+        this.msgMgr.addInfo('Created example crossword : '+name+'.');
       } else {
-        this.msgMgr.addInfo('Created : '+name+', now set blanks and clues');  
+        this.msgMgr.addInfo('Created crossword : '+name+', now set blanks and clues');  
       } 
     }
     let msg = this.msgMgr.msg();
@@ -728,10 +732,14 @@ class Game extends React.Component {
     } );
   }
 
-  resultCreateSave(cwObj, ok) {
+  resultCreateSave(cwObj, ok, err) {
     console.log('Game : resultCreateSave : enter');
+    let name = '?';
+    if (cwObj != null) {
+      name = cwObj.name;
+    }
     if (!ok) {
-      this.msgMgr.addError('Failed to save.');
+      this.msgMgr.addError('Failed to save crossword : '+name+'. '+err);
     } else {
       // should not happen
     }
@@ -741,13 +749,13 @@ class Game extends React.Component {
     } );
   }
 
-  resultGet(cwObj, ok, name) {
+  resultGet(cwObj, ok, name, err) {
     console.log('Game : resultGet : enter');
 
     let action = this.state.action;
 
     if (!ok) {
-      this.msgMgr.addError('Failed to get crossword : '+name);
+      this.msgMgr.addError('Failed to get crossword : '+name+'. '+err);
       let msg = this.msgMgr.msg();
       this.setState( {
         msg: msg , updateTimestamp: Util.newDate()
@@ -771,11 +779,11 @@ class Game extends React.Component {
     }
   }
 
-  resultDelete(deletedOK, cword) {
+  resultDelete(deletedOK, cword, err) {
     console.log('Game : resultDelete : enter');
     let name = cword.name;
     if (!deletedOK) {
-      this.msgMgr.addError('Failed to delete crossword : '+name);
+      this.msgMgr.addError('Failed to delete crossword : '+name+'. '+err);
     } else {
       this.msgMgr.addInfo('Deleted crossword : '+name);
     }
