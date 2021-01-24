@@ -1634,7 +1634,9 @@ class Cword {
     let cellKey = Util.cellKeyFromCellId(id);
     console.log('KeyUp : '+id+'...'+cellKey+'...'+keyev+'...'+key);
     let cell = this.cellMap.get(cellKey);
+    let initialValue = cell.value;
 
+    let changedValue = null;
     if (keyev === 'ArrowUp') {
       this.arrowUp(cell, cell.nextUpId);
     } else if (keyev === 'ArrowDown') {
@@ -1655,13 +1657,18 @@ class Cword {
     } else if (key >= 65 && key <= 90) {
       cell.value = ''+keyev;
       this.letterUp(cell, 1);
+      if (cell.value !== initialValue) {
+        changedValue = cell.value;
+        console.log('KeyUp : '+id+'...'+cellKey+'...changedValue : ...['+changedValue+']');
+      }
     } else {
 
       // https://medium.com/@ericclemmons/react-event-preventdefault-78c28c950e46
 
-      ev.preventDefault();
-      return false;
+      // ev.preventDefault();
+      // return false;
     }
+    return changedValue;
   }
 
   earlierInRow(cell, newId) {

@@ -376,15 +376,22 @@ class Game extends React.Component {
 
     console.log('Game : START : -------------------------------------------->');
     console.log('Game : START : onKeyUpPlayCell ----> id : '+id+' ------------->');
-    console.log('Game : START : -------------------------------------------->');  
+    console.log('Game : START : -------------------------------------------->');   
 
     let cword = this.state.cword;
-    let result = cword.keyUpPlayCell(ev);
+    let value = cword.keyUpPlayCell(ev);
 
-    this.setState({ msg: null, cword: cword,
-      updateTimestamp: Util.newDate() }); 
+    if (value != null) {
+      console.log('Game : got value : ['+value+']');
+      cword.cellChanged(id, value);
+      this.storeSave(cword);
 
-    return result;
+    } else {
+
+      this.setState({ msg: null, cword: cword,
+        updateTimestamp: Util.newDate() }); 
+    }
+
   }
 
   onKeyDownPlayCell(ev) {
@@ -672,7 +679,7 @@ class Game extends React.Component {
     if (action === Util.ACTION_IMPORT) {
       // resultSaveImport(ok);
     } else if (action === Util.ACTION_PLAY) {
-      // resultSavePlay(ok);
+      this.resultPlayUpdate(cwObj, ok, err);
     } else if (action === Util.ACTION_CREATE) {
       this.resultCreateUpdate(cwObj, ok, err);
     } else if (action === Util.ACTION_UPDATE) {
@@ -694,6 +701,18 @@ class Game extends React.Component {
     } else if (action === Util.ACTION_UPDATE) {
       // resultSaveUpdate(ok);
     }
+  }
+
+  resultPlayUpdate(cwObj, ok, err) {
+    console.log('Game : resultPlayUpdate : enter');
+    let name = cwObj.name;
+    if (!ok) {
+      this.msgMgr.addError('Failed to save crossword : '+name+' . '+err);
+    } 
+    let msg = this.msgMgr.msg();
+    this.setState( {
+      msg: msg , cword: cwObj, updateTimestamp: Util.newDate()
+    } );
   }
 
   resultCreateUpdate(cwObj, ok, err) {
