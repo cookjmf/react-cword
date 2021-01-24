@@ -2,6 +2,7 @@ import * as Util from './util';
 
 /*
   Cell : a square in the crossword grid
+
   y : row , from top to bottom, starts with 1
   x : column , from left to right , starts with 1
   label : number in top left corner of cell
@@ -13,16 +14,18 @@ import * as Util from './util';
   downPos : the position in the down clue
   downLabel : the label of the down clue
 
-  dataCac : the number of clue across
-  dataNac : the number of next clue across
-  dataPac : the number of prev clue across
-  dataCdo : the number of clue down
-  dataNdo : the number of next clue down
-  dataPdo : the number of prev clue down
-  dataIup : the css id of next input cell up
-  dataIdo : the css id of next input cell down
-  dataIle : the css id of next input cell left
-  dataIri : the css id of next input cell right
+  clueAcrossLabel : the label of clue across
+  nextAcrossLocation : the location of next clue across
+  prevAcrossLocation : the location of prev clue across
+
+  clueDownLabel : the label of clue down
+  nextDownLocation : the location of next clue down
+  prevDownLocation : the location of prev clue down
+
+  nextUpId : the id of next cell up
+  nextDownId : the id of next cell down
+  nextLeftId : the id of next cell left
+  nextRightId : the id of next cell right
 
   bgColor: background color
 */
@@ -42,16 +45,20 @@ class Cell {
     this.downPos = 0;
     this.downLabel = 0;
 
-    this.dataCac = 0;
+    this.clueAcrossLabel = 0;
+
     this.nextAcrossLocation = '';
     this.prevAcrossLocation = '';
-    this.dataCdo = 0;
+
+    this.clueDownLabel = 0;
+
     this.nextDownLocation = '';
     this.prevDownLocation = '';
-    this.dataIup = '';
-    this.dataIdo = '';
-    this.dataIle = '';
-    this.dataIre = '';
+
+    this.nextUpId = '';
+    this.nextDownId = '';
+    this.nextLeftId = '';
+    this.nextRightId = '';
 
     this.bgColor = Util.COLOR_NONE;
   }

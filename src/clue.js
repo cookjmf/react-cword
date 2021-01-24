@@ -2,6 +2,7 @@ import * as Util from './util';
 
 /*
   Clue : a crossword clue
+  
   y : row in grid of first letter
   x : column in grid of first letter
   isAcross : true if across , false if down

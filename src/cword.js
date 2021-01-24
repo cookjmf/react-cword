@@ -1031,16 +1031,19 @@ class Cword {
       }
     }
 
-    cell.dataCac = acrossLabel;
+    cell.clueAcrossLabel = acrossLabel;
+    cell.clueDownLabel = downLabel;
+
     cell.nextAcrossLocation = nextAcrossLocation;
     cell.prevAcrossLocation = prevAcrossLocation;
-    cell.dataCdo = downLabel;
+
     cell.nextDownLocation = nextDownLocation;
     cell.prevDownLocation = prevDownLocation;
-    cell.dataIup = upId;
-    cell.dataIdo = downId;
-    cell.dataIle = leftId;
-    cell.dataIri = rightId; 
+
+    cell.nextUpId = upId;
+    cell.nextDownId = downId;
+    cell.nextLeftId = leftId;
+    cell.nextRightId = rightId; 
   }
 
   getActiveCellDown(cell, n) {
@@ -1547,8 +1550,8 @@ class Cword {
         if (cell2 == null) {
           continue;
         }
-        var cac2 = cell2.dataCac;
-        if (cell.dataCac === cac2) {
+        var cac2 = cell2.clueAcrossLabel;
+        if (cell.clueAcrossLabel === cac2) {
           // same clue
           if (cellKey === cellKey2) {
             cell2.bgColor = Util.COLOR_ORANGE;
@@ -1576,8 +1579,8 @@ class Cword {
         if (cell2 == null) {
           continue;
         }
-        var cdo2 = cell2.dataCdo;
-        if (cell.dataCdo === cdo2) {
+        var cdo2 = cell2.clueDownLabel;
+        if (cell.clueDownLabel === cdo2) {
           // same down clue
           if (cellKey === cellKey2) {
             cell2.bgColor = Util.COLOR_ORANGE;
@@ -1633,13 +1636,13 @@ class Cword {
     let cell = this.cellMap.get(cellKey);
 
     if (keyev === 'ArrowUp') {
-      this.arrowUp(cell, cell.dataIup);
+      this.arrowUp(cell, cell.nextUpId);
     } else if (keyev === 'ArrowDown') {
-      this.arrowUp(cell, cell.dataIdo);
+      this.arrowUp(cell, cell.nextDownId);
     } else if (keyev === 'ArrowLeft') {
-      this.arrowUp(cell, cell.dataIle);
+      this.arrowUp(cell, cell.nextLeftId);
     } else if (keyev === 'ArrowRight') {
-      this.arrowUp(cell, cell.dataIri);
+      this.arrowUp(cell, cell.nextRightId);
     } else if (key === 8) {      
       cell.value = '';
       this.letterUp(cell, -1);
@@ -1661,10 +1664,83 @@ class Cword {
     }
   }
 
-  letterUp(cell, disp) {
-    console.log('letterUp : '+cell.toId()+'...'+disp);
+  earlierInRow(cell, newId) {
+    let cellKey = cell.getKey();
+    let newCellKey = Util.cellKeyFromCellId(newId);
+    let x = Util.column(cellKey);
+    let newX = Util.column(newCellKey);
+    // console.log('earlierInRow : ... x : '+x+' ... newX : '+newX);
+    if (newX < x) {
+      // console.log('earlierInRow :  newX ('+newX+') is less than x ('+x+')');
+      return true;
+    }
+    // console.log('earlierInRow :  newX ('+newX+') is NOT less than x ('+x+')');
+    return false;
+  }
 
-    // TODO
+  earlierInColumn(cell, newId) {
+    let cellKey = cell.getKey();
+    let newCellKey = Util.cellKeyFromCellId(newId);
+    let y = Util.row(cellKey);
+    let newY = Util.row(newCellKey);
+    if (newY < y) {
+      return true;
+    }
+    return false;
+  }
+
+  letterUp(cell, delta) {
+    console.log('letterUp : '+cell.toId()+'...'+delta);
+    // delta : 1 = a-z  -1 = backspace
+
+    let acrossClue = cell.acrossClue;
+    let acrossSel = this.isSelectedClue(acrossClue);
+
+    // backspace should not "wrap" to a new clue
+    // letter should not "wrap" to new clue 
+    let newId = '';
+    if (acrossSel) {       
+      if (delta === 1) {
+        newId = cell.nextRightId;
+        if (this.earlierInRow(cell, newId)) {
+          newId = cell.toId();
+        } 
+      } else if (delta === -1) {
+        newId = cell.nextLeftId;
+        if (!this.earlierInRow(cell, newId)) {
+          newId = cell.toId();
+        } 
+      }
+    } else {
+      if (delta === 1) {
+        newId = cell.nextDownId;
+        if (this.earlierInColumn(cell, newId)) {
+          newId = cell.toId();
+        }
+      } else if (delta === -1) {
+        newId = cell.nextUpId;
+        if (!this.earlierInColumn(cell, newId)) {
+          newId = cell.toId();
+        }
+      }
+    }
+
+    console.log('letterUp : ... acrossSel : '+acrossSel+'... newId : '+newId);
+
+    let newCellKey = Util.cellKeyFromCellId(newId);
+    let newCell = this.cellMap.get(newCellKey);
+
+    let newClue = null; 
+     
+    if (acrossSel) { 
+      newClue = newCell.acrossClue;
+    } else {
+      newClue = newCell.downClue;
+    }
+    this.selectedClue = newClue;   
+
+    this.makeCurrentCell(newCell);
+    
   }
 
   tabUp(cell, delta) {
