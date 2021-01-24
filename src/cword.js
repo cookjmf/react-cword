@@ -999,42 +999,42 @@ class Cword {
 
     var acrossClue = cell.acrossClue;
     var acrossLabel = 0;
-    var nextAcrossLabel = 0;
-    var prevAcrossLabel = 0;
+    var nextAcrossLocation = '';
+    var prevAcrossLocation = '';
     if (acrossClue != null) {
       acrossLabel = acrossClue.getLabel();
       var nextAcrossClue = this.getNextAcrossClue(acrossClue);
       if (nextAcrossClue != null) {
-        nextAcrossLabel = nextAcrossClue.getLabel();
+        nextAcrossLocation = nextAcrossClue.uniqLocation();
       }
       var prevAcrossClue = this.getPrevAcrossClue(acrossClue);
       if (prevAcrossClue != null) {
-        prevAcrossLabel = prevAcrossClue.getLabel();
+        prevAcrossLocation = prevAcrossClue.uniqLocation();
       }
     }
 
     var downClue = cell.downClue;
     var downLabel = 0;
-    var nextDownLabel = 0;
-    var prevDownLabel = 0;
+    var nextDownLocation = '';
+    var prevDownLocation = '';
     if (downClue != null) {
       downLabel = downClue.getLabel();
       var nextDownClue = this.getNextDownClue(downClue);
       if (nextDownClue != null) {
-        nextDownLabel = nextDownClue.getLabel();
+        nextDownLocation = nextDownClue.uniqLocation();
       }
       var prevDownClue = this.getPrevDownClue(downClue);
       if (prevDownClue != null) {
-        prevDownLabel = prevDownClue.getLabel();
+        prevDownLocation = prevDownClue.uniqLocation();
       }
     }
 
     cell.dataCac = acrossLabel;
-    cell.dataNac = nextAcrossLabel;
-    cell.dataPac = prevAcrossLabel;
+    cell.nextAcrossLocation = nextAcrossLocation;
+    cell.prevAcrossLocation = prevAcrossLocation;
     cell.dataCdo = downLabel;
-    cell.dataNdo = nextDownLabel;
-    cell.dataPdo = prevDownLabel;
+    cell.nextDownLocation = nextDownLocation;
+    cell.prevDownLocation = prevDownLocation;
     cell.dataIup = upId;
     cell.dataIdo = downId;
     cell.dataIle = leftId;
@@ -1537,15 +1537,15 @@ class Cword {
 
     // calculate desired background colors
     if (this.selectedClue.isAcross) {
-      this.handleClickAcross(cellKey);
+      this.setBgClueAcross(cellKey);
 
     } else {
-      this.handleClickDown(cellKey);
+      this.setBgClueDown(cellKey);
     }
 
   }
 
-  handleClickAcross(cellKey) {
+  setBgClueAcross(cellKey) {
     // set bgColor for selected across clue
     let maxAcross = this.getMaxAcross();
     let maxDown = this.getMaxAcross();
@@ -1574,7 +1574,7 @@ class Cword {
     }
   }
 
-  handleClickDown(cellKey) {
+  setBgClueDown(cellKey) {
     // set bgColor for selected down clue
     let maxAcross = this.getMaxAcross();
     let maxDown = this.getMaxAcross();
@@ -1673,17 +1673,44 @@ class Cword {
 
   letterUp(cell, disp) {
     console.log('letterUp : '+cell.toId()+'...'+disp);
+
+    // TODO
   }
 
-  tabUp(cell, disp) {
-    console.log('tabUp : '+cell.toId()+'...'+disp);
+  tabUp(cell, delta) {
+    console.log('tabUp : '+cell.toId()+'...'+delta);
+    // delta : 1 = forward  -1 = backward
+    let acrossClue = cell.acrossClue;
+    let acrossSel = this.isSelectedClue(acrossClue);
+
+    let newLocation = '';
+    if (acrossSel) {       
+      if (delta === 1) {
+        newLocation = cell.nextAcrossLocation;
+      } else if (delta === -1) {
+        newLocation = cell.prevAcrossLocation;
+      }
+    } else {
+      if (delta === 1) {
+        newLocation = cell.nextDownLocation;
+      } else if (delta === -1) {
+        newLocation = cell.prevDownLocation;
+      }
+    }
+
+    let newClue = this.clueMap.get(newLocation);
+    this.selectedClue = newClue;    
+
+    let newCell = this.selectedClue.firstCell;
+
+    this.makeCurrentCell(newCell);
   }
 
-  arrowUp(nextId) {
-    console.log('arrowUp : next is : '+nextId);
-    let nextCellKey = Util.cellKeyFromCellId(nextId);
-    let nextCell = this.cellMap.get(nextCellKey);
-    this.makeCurrentCell(nextCell);
+  arrowUp(newId) {
+    console.log('arrowUp : new id is : '+newId);
+    let newCellKey = Util.cellKeyFromCellId(newId);
+    let newCell = this.cellMap.get(newCellKey);
+    this.makeCurrentCell(newCell);
   }
 
   keyDownPlayCell(ev) {
@@ -1695,18 +1722,7 @@ class Cword {
     // var charcode = ev.charCode;
     let cellKey = Util.cellKeyFromCellId(id);
     console.log('KeyDown : '+id+'...'+cellKey+'...'+keyev+'...'+key);
- 
-    // if (key == 8) {
-      
-    // } else if (key == 9) {
-      
-    // } else if (key >= 65 && key <= 90) {
-      
-    // } else if (key >= 97 && key <= 122) {
-      
-    // } else {
-      
-    // }
+
     ev.preventDefault();
     
     return false;

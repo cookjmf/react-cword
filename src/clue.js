@@ -49,7 +49,8 @@ class Clue {
   }
 
   uniqLocation() {
-    return this.y+'.'+this.x+'.'+Util.direction(this.isAcross);
+    // return this.y+'.'+this.x+'.'+Util.direction(this.isAcross);
+    return Util.uniqLocation(this.y,this.x,this.isAcross);
   }
 
   getLabel() {

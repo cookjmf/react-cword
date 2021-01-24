@@ -417,3 +417,7 @@ export const layerDebug = () => {
   // works by appending updateTimestamp to the name of each component.
   return false;
 }
+
+export const uniqLocation = (y,x,isAcross) => {
+  return y+'.'+x+'.'+direction(isAcross);
+}

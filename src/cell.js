@@ -43,11 +43,11 @@ class Cell {
     this.downLabel = 0;
 
     this.dataCac = 0;
-    this.dataNac = 0;
-    this.dataPac = 0;
+    this.nextAcrossLocation = '';
+    this.prevAcrossLocation = '';
     this.dataCdo = 0;
-    this.dataNdo = 0;
-    this.dataPdo = 0;
+    this.nextDownLocation = '';
+    this.prevDownLocation = '';
     this.dataIup = '';
     this.dataIdo = '';
     this.dataIle = '';
@@ -63,6 +63,7 @@ class Cell {
   getKey() {
     return Util.cellKey(this.y, this.x);
   }
+
 }
 
 export default Cell;
