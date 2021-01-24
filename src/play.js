@@ -90,7 +90,7 @@ class Play extends React.Component {
 
               <PlayAcrossClues
                 cword={ cword} 
-                onClick={ this.props.onClickPlayAcrossClues }
+                onClickAcrossClue={ this.props.onClickAcrossClue }
               >         
               </PlayAcrossClues>
 
@@ -106,7 +106,7 @@ class Play extends React.Component {
 
               <PlayDownClues
                 cword={ cword} 
-                onClick={ this.props.onClickPlayDownClues }
+                onClickDownClue={ this.props.onClickDownClue }
               >
               </PlayDownClues>
             </div>

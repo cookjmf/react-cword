@@ -23,7 +23,7 @@ class PlayDownClue extends React.Component {
     let labelText = clue.getLabel()+". ";
 
     let id2 = 'cdo'+downClueKey;
-    let id3 = 'acdo'+downClueKey;
+    let id3 = downClueKey;
 
     let href = "#acdo"+downClueKey;
 

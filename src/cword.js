@@ -1669,12 +1669,9 @@ class Cword {
     let newCellKey = Util.cellKeyFromCellId(newId);
     let x = Util.column(cellKey);
     let newX = Util.column(newCellKey);
-    // console.log('earlierInRow : ... x : '+x+' ... newX : '+newX);
     if (newX < x) {
-      // console.log('earlierInRow :  newX ('+newX+') is less than x ('+x+')');
       return true;
     }
-    // console.log('earlierInRow :  newX ('+newX+') is NOT less than x ('+x+')');
     return false;
   }
 
@@ -1825,10 +1822,22 @@ class Cword {
 
   acrossClueClicked(id) {
     console.log('acrossClueClicked : '+id);
+
+    let clue = this.clueMap.get(id);
+    this.selectedClue = clue;
+
+    let cell = clue.firstCell;
+    this.makeCurrentCell(cell);
   }
 
   downClueClicked(id) {
     console.log('downClueClicked : '+id);
+
+    let clue = this.clueMap.get(id);
+    this.selectedClue = clue;
+
+    let cell = clue.firstCell;
+    this.makeCurrentCell(cell);
   }
 
 }

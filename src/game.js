@@ -35,8 +35,8 @@ class Game extends React.Component {
     this.onChangePlayCell = this.onChangePlayCell.bind(this);
     this.onKeyUpPlayCell = this.onKeyUpPlayCell.bind(this);
     this.onKeyDownPlayCell = this.onKeyDownPlayCell.bind(this);
-    this.onClickPlayAcrossClues = this.onClickPlayAcrossClues.bind(this);
-    this.onClickPlayDownClues = this.onClickPlayDownClues.bind(this);
+    this.onClickAcrossClue = this.onClickAcrossClue.bind(this);
+    this.onClickDownClue = this.onClickDownClue.bind(this);
 
     // message manager
     this.msgMgr = new MsgMgr();
@@ -405,10 +405,10 @@ class Game extends React.Component {
     return result;
   }
 
-  onClickPlayAcrossClues(id) {
+  onClickAcrossClue(id) {
 
     console.log('Game : START : -------------------------------------------->');
-    console.log('Game : START : onClickPlayAcrossClues ----> '+id+'------------->');
+    console.log('Game : START : onClickAcrossClue ----> '+id+'------------->');
     console.log('Game : START : -------------------------------------------->');  
 
     let cword = this.state.cword;
@@ -419,10 +419,10 @@ class Game extends React.Component {
 
   }
 
-  onClickPlayDownClues(id) {
+  onClickDownClue(id) {
 
     console.log('Game : START : -------------------------------------------->');
-    console.log('Game : START : onClickPlayDownClues ----> '+id+'------------->');
+    console.log('Game : START : onClickDownClue ----> '+id+'------------->');
     console.log('Game : START : -------------------------------------------->');  
 
     let cword = this.state.cword;
@@ -941,8 +941,8 @@ class Game extends React.Component {
           onChangePlayCell={ this.onChangePlayCell }
           onKeyUpPlayCell={ this.onKeyUpPlayCell }
           onKeyDownPlayCell={ this.onKeyDownPlayCell }
-          onClickPlayAcrossClue={ this.onClickPlayAcrossClue }
-          onClickPlayDownClue={ this.onClickPlayDownClue }
+          onClickAcrossClue={ this.onClickAcrossClue }
+          onClickDownClue={ this.onClickDownClue }
         />
       </div>
     );

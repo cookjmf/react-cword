@@ -23,7 +23,7 @@ class PlayAcrossClue extends React.Component {
     let labelText = clue.getLabel()+". ";
 
     let id2 = 'cac'+acrossClueKey;
-    let id3 = 'acac'+acrossClueKey;
+    let id3 = acrossClueKey;
 
     let href = "#acac"+acrossClueKey;
 
