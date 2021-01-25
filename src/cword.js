@@ -1663,8 +1663,6 @@ class Cword {
       }
     } else {
 
-      // https://medium.com/@ericclemmons/react-event-preventdefault-78c28c950e46
-
       // ev.preventDefault();
       // return false;
     }

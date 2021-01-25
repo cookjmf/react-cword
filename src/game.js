@@ -137,9 +137,11 @@ class Game extends React.Component {
         console.log("logic error : no example found named : "+newName);
       }
     } else if (action === Util.ACTION_PLAY) {
-
       this.storeGet(newName);
-
+    } else if (action === Util.ACTION_UPDATE) {
+      this.storeGet(newName);
+    } else if (action === Util.ACTION_EXPORT) {
+      this.storeGet(newName);
     } else {
       // other actions here
 
@@ -354,18 +356,21 @@ class Game extends React.Component {
 
   onChangePlayCell(ev) {
 
+    // changes handled in "onKeyUpPlayCell"
+    // react complains if no onChange handler exists
+
     var elem = ev.currentTarget;
     var id = elem.id;
     var value = elem.value;
 
-    console.log('Game : START : -------------------------------------------->');
+    // console.log('Game : START : -------------------------------------------->');
     console.log('Game : START : onChangePlayCell ----> id : '+id+' ------------->');
     console.log('Game : START : onChangePlayCell ----> value : '+value+' ------------->');
-    console.log('Game : START : -------------------------------------------->');  
+    // console.log('Game : START : -------------------------------------------->');  
 
-    let cword = this.state.cword;
-    cword.cellChanged(id, value);
-    this.storeSave(cword);
+    // let cword = this.state.cword;
+    // cword.cellChanged(id, value);
+    // this.storeSave(cword);
     
   }
 
@@ -669,7 +674,7 @@ class Game extends React.Component {
     } else if (action === Util.ACTION_CREATE) {
       this.resultCreateSave(ok, err);
     } else if (action === Util.ACTION_UPDATE) {
-      // resultSaveUpdate(ok);
+      this.resultUpdateSave(ok, err);
     }
   }
 
@@ -683,7 +688,7 @@ class Game extends React.Component {
     } else if (action === Util.ACTION_CREATE) {
       this.resultCreateUpdate(cwObj, ok, err);
     } else if (action === Util.ACTION_UPDATE) {
-      // resultSaveUpdate(ok);
+      this.resultUpdateUpdate(cwObj, ok, err);
     }
   }
 
@@ -693,13 +698,13 @@ class Game extends React.Component {
     if (action === Util.ACTION_IMPORT) {
       // resultSaveImport(ok);
     } else if (action === Util.ACTION_PLAY) {
-      // resultSavePlay(ok);
+      // not possible
     } else if (action === Util.ACTION_CREATE) {
       this.resultCreateInsert(cwObj, ok, false, err);
     } else if (action === Util.ACTION_CREATE_EXAMPLE) {
       this.resultCreateInsert(cwObj, ok, true, err);
     } else if (action === Util.ACTION_UPDATE) {
-      // resultSaveUpdate(ok);
+      // not possible
     }
   }
 
@@ -717,6 +722,20 @@ class Game extends React.Component {
 
   resultCreateUpdate(cwObj, ok, err) {
     console.log('Game : resultCreateUpdate : enter');
+    let name = cwObj.name;
+    if (!ok) {
+      this.msgMgr.addError('Failed to save crossword : '+name+' . '+err);
+    } else {
+      this.msgMgr.addConfirmInfo( 'Updated crossword : '+name+' at '+Util.date1(), "Validate" );
+    }
+    let msg = this.msgMgr.msg();
+    this.setState( {
+      msg: msg , cword: cwObj, updateTimestamp: Util.newDate()
+    } );
+  }
+
+  resultUpdateUpdate(cwObj, ok, err) {
+    console.log('Game : resultUpdateUpdate : enter');
     let name = cwObj.name;
     if (!ok) {
       this.msgMgr.addError('Failed to save crossword : '+name+' . '+err);
@@ -768,6 +787,23 @@ class Game extends React.Component {
     } );
   }
 
+  resultUpdateSave(cwObj, ok, err) {
+    console.log('Game : resultUpdateSave : enter');
+    let name = '?';
+    if (cwObj != null) {
+      name = cwObj.name;
+    }
+    if (!ok) {
+      this.msgMgr.addError('Failed to save crossword : '+name+'. '+err);
+    } else {
+      // should not happen
+    }
+    let msg = this.msgMgr.msg();
+    this.setState( {
+      msg: msg , cword: cwObj, updateTimestamp: Util.newDate()
+    } );
+  }
+
   resultGet(cwObj, ok, name, err) {
     console.log('Game : resultGet : enter');
 
@@ -782,12 +818,14 @@ class Game extends React.Component {
 
     } else {
       let cword = new Cword();
-
       cword.setupCwordFromStorageObject(cwObj);
 
       let msg = null;
       if (action === Util.ACTION_PLAY) {
         msg = cword.buildForPlay();
+      } else if (action === Util.ACTION_EXPORT) {
+        this.msgMgr.addInfo('Copy this text and save for future import');
+        msg = this.msgMgr.msg();
       }
 
       this.setState( { 
@@ -923,10 +961,70 @@ class Game extends React.Component {
           onClickMessageConfirm={ this.onClickMessageConfirm }
         /> 
         <Param
+          action= { this.state.action }
           cword={ cword}
           onClickParamCell={ this.onClickParamCell }
           onKeyUpParamAcrossTextarea={ this.onKeyUpParamAcrossTextarea }
           onKeyUpParamDownTextarea={ this.onKeyUpParamDownTextarea }
+        />
+      </div>
+    );
+  }
+
+  renderUpdateWithName() {
+    // chose update, entered name
+    console.log('Game : renderUpdateWithName : enter');
+
+    let cword = this.state.cword;
+
+    return (
+      <div className="game"> 
+        <Init 
+          action=''
+          selectedAction={ Util.ACTION_TITLE }
+          selectedSize={ cword.size }
+          existingNames={ this.state.existingNames }
+          onChangeAction={ this.onChangeAction }
+        />
+        <Message         
+          msg={ this.state.msg }
+          onClickMessageClose={ this.onClickMessageClose }
+          onClickMessageConfirm={ this.onClickMessageConfirm }
+        /> 
+        <Param
+          action= { this.state.action }
+          cword={ cword}
+          onClickParamCell={ this.onClickParamCell }
+          onKeyUpParamAcrossTextarea={ this.onKeyUpParamAcrossTextarea }
+          onKeyUpParamDownTextarea={ this.onKeyUpParamDownTextarea }
+        />
+      </div>
+    );
+  }
+
+  renderExportWithName() {
+    // chose export, entered name
+    console.log('Game : renderExportWithName : enter');
+
+    let cword = this.state.cword;
+
+    return (
+      <div className="game"> 
+        <Init 
+          action=''
+          selectedAction={ Util.ACTION_TITLE }
+          selectedSize={ cword.size }
+          existingNames={ this.state.existingNames }
+          onChangeAction={ this.onChangeAction }
+        />
+        <Message         
+          msg={ this.state.msg }
+          onClickMessageClose={ this.onClickMessageClose }
+          onClickMessageConfirm={ this.onClickMessageConfirm }
+        /> 
+        <Param
+          action= { this.state.action }
+          cword={ cword}
         />
       </div>
     );
@@ -999,6 +1097,50 @@ class Game extends React.Component {
         <Init 
           action={ this.state.action}
           selectedAction={Util.ACTION_DELETE}
+          existingNames={ this.state.existingNames }
+          onChangeName={ this.onChangeName }
+          onChangeAction={ this.onChangeAction }
+        /> 
+        <Message         
+          msg={ this.state.msg }
+          onClickMessageClose={ this.onClickMessageClose }
+        />   
+      </div>
+    );
+  }
+
+  renderUpdate() {
+    // chose update
+    console.log('Game : renderUpdate : enter');
+    console.log('Game : renderUpdate : state : '+JSON.stringify(this.state));
+
+    return (
+      <div className="game"> 
+        <Init 
+          action={ this.state.action}
+          selectedAction={Util.ACTION_UPDATE}
+          existingNames={ this.state.existingNames }
+          onChangeName={ this.onChangeName }
+          onChangeAction={ this.onChangeAction }
+        /> 
+        <Message         
+          msg={ this.state.msg }
+          onClickMessageClose={ this.onClickMessageClose }
+        />   
+      </div>
+    );
+  }
+
+  renderExport() {
+    // chose export
+    console.log('Game : renderExport : enter');
+    console.log('Game : renderExport : state : '+JSON.stringify(this.state));
+
+    return (
+      <div className="game"> 
+        <Init 
+          action={ this.state.action}
+          selectedAction={Util.ACTION_EXPORT}
           existingNames={ this.state.existingNames }
           onChangeName={ this.onChangeName }
           onChangeAction={ this.onChangeAction }
@@ -1108,10 +1250,24 @@ class Game extends React.Component {
         console.log('Game : START : ------- CASE : Play/Name -----> renderPlayWithName');
         return this.renderPlayWithName();
       }
-    // } else if (this.state.action === Util.ACTION_UPDATE) {
-
-    // } else if (this.state.action === Util.ACTION_EXPORT) {
-
+    } else if (this.state.action === Util.ACTION_UPDATE) {
+      if (name === '') {
+        // name to be chosen
+        console.log('Game : START : ------- CASE : Update/NoName -----> renderUpdate'); 
+        return this.renderUpdate();
+      } else {
+        console.log('Game : START : ------- CASE : Update/Name -----> renderUpdateWithName'); 
+        return this.renderUpdateWithName();
+      }
+    } else if (this.state.action === Util.ACTION_EXPORT) {
+      if (name === '') {
+        // name to be chosen
+        console.log('Game : START : ------- CASE : Export/NoName -----> renderExport'); 
+        return this.renderExport();
+      } else {
+        console.log('Game : START : ------- CASE : Export/Name -----> renderExportWithName'); 
+        return this.renderExportWithName();
+      }
     // } else if (this.state.action === Util.ACTION_IMPORT) {
 
     } else if (action === Util.ACTION_DELETE) {

@@ -87,6 +87,42 @@ class Init extends React.Component {
     );
   }
 
+  renderUpdate() {
+    console.log('Init : renderUpdate : enter');
+
+    return (
+      <div id="cw-init-cont" className="cw-cont"> 
+        <Action   
+          selected= { this.props.selectedAction }  
+          existingNames={ this.props.existingNames}               
+          onChange={ this.props.onChangeAction }
+        />
+        <Name    
+          existingNames={ this.props.existingNames}   
+          onChange={ this.props.onChangeName }
+        />
+      </div>
+    );
+  }
+
+  renderExport() {
+    console.log('Init : renderExport : enter');
+
+    return (
+      <div id="cw-init-cont" className="cw-cont"> 
+        <Action   
+          selected= { this.props.selectedAction }  
+          existingNames={ this.props.existingNames}               
+          onChange={ this.props.onChangeAction }
+        />
+        <Name    
+          existingNames={ this.props.existingNames}   
+          onChange={ this.props.onChangeName }
+        />
+      </div>
+    );
+  }
+
   renderInit() {
     console.log('Init : renderInit : enter');
 
@@ -128,6 +164,18 @@ class Init extends React.Component {
     } else if (action === Util.ACTION_PLAY) {
       if (name === '') {
         return this.renderPlay();
+      } else {
+        return this.renderInit();
+      }
+    } else if (action === Util.ACTION_UPDATE) {
+      if (name === '') {
+        return this.renderUpdate();
+      } else {
+        return this.renderInit();
+      }
+    } else if (action === Util.ACTION_EXPORT) {
+      if (name === '') {
+        return this.renderExport();
       } else {
         return this.renderInit();
       }
