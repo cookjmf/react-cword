@@ -30,6 +30,7 @@ class Game extends React.Component {
     this.onClickParamCell = this.onClickParamCell.bind(this);
     this.onKeyUpParamAcrossTextarea = this.onKeyUpParamAcrossTextarea.bind(this);
     this.onKeyUpParamDownTextarea = this.onKeyUpParamDownTextarea.bind(this);
+    this.onKeyUpImportTextarea = this.onKeyUpImportTextarea.bind(this);
     // play
     this.onClickPlayCell = this.onClickPlayCell.bind(this);
     this.onChangePlayCell = this.onChangePlayCell.bind(this);
@@ -37,6 +38,7 @@ class Game extends React.Component {
     this.onKeyDownPlayCell = this.onKeyDownPlayCell.bind(this);
     this.onClickAcrossClue = this.onClickAcrossClue.bind(this);
     this.onClickDownClue = this.onClickDownClue.bind(this);
+    
 
     // message manager
     this.msgMgr = new MsgMgr();
@@ -103,6 +105,12 @@ class Game extends React.Component {
     } else if (newAction === Util.ACTION_CLEAR) {
 
       this.storeGetNames();
+    } else if (newAction === Util.ACTION_IMPORT) {
+
+      this.msgMgr.addInfo('Enter JSON text below');
+      this.setState({ 
+        msg : this.msgMgr.msg() , updateTimestamp: Util.newDate()
+      });
 
     } else {
 
@@ -142,6 +150,8 @@ class Game extends React.Component {
       this.storeGet(newName);
     } else if (action === Util.ACTION_EXPORT) {
       this.storeGet(newName);
+    } else if (action === Util.ACTION_IMPORT) {
+
     } else {
       // other actions here
 
@@ -295,6 +305,7 @@ class Game extends React.Component {
       });
 
     }
+    //'cw-message-'
   }
 
   onClickParamCell(id) {
@@ -442,6 +453,34 @@ class Game extends React.Component {
 
     this.setState({ msg: null, cword: cword,
       updateTimestamp: Util.newDate() }); 
+  }
+
+  onKeyUpImportTextarea(ev) {
+
+    var elem = ev.currentTarget;
+    var id = elem.id;
+
+    console.log('Game : START : -------------------------------------------->');
+    console.log('Game : START : onKeyUpImportTextarea ----> id : '+id+' ------------->');
+    console.log('Game : START : -------------------------------------------->');   
+
+    let value = cword.keyUpImportTextArea(ev);
+    if (value != null) {
+      let cword = null;
+      try {
+        let cwObj = JSON.parse(value);
+        cword = setupCwordFromStorageObject(cwObj);
+
+        this.msgMgr.addConfirm('Import using this JSON text ?');
+
+      } catch (err) {
+        this.msgMgr.addError('Invalid JSON. '+err);
+      }
+
+      this.setState({ msg: this.msgMger.msg(), cword: cword,
+        updateTimestamp: Util.newDate() }); 
+    }
+
   }
 
   // store methods
@@ -1153,6 +1192,28 @@ class Game extends React.Component {
     );
   }
 
+  renderImport() {
+    // chose import
+    console.log('Game : renderImport : enter');
+    console.log('Game : renderImport : state : '+JSON.stringify(this.state));
+
+    return (
+      <div className="game"> 
+        <Init 
+          action={ this.state.action}
+          selectedAction={Util.ACTION_IMPORT}
+          existingNames={ this.state.existingNames }
+          onChangeName={ this.onChangeName }
+          onChangeAction={ this.onChangeAction }
+        /> 
+        <Message         
+          msg={ this.state.msg }
+          onClickMessageClose={ this.onClickMessageClose }
+        />   
+      </div>
+    );
+  }
+
   renderMessageAfterAction() {
     // chose delete / createExample
     console.log('Game : renderMessageAfterAction : enter');
@@ -1268,8 +1329,11 @@ class Game extends React.Component {
         console.log('Game : START : ------- CASE : Export/Name -----> renderExportWithName'); 
         return this.renderExportWithName();
       }
-    // } else if (this.state.action === Util.ACTION_IMPORT) {
+    } else if (this.state.action === Util.ACTION_IMPORT) {
 
+      console.log('Game : START : ------- CASE : Import -----> renderImport'); 
+      return this.renderImport();
+       
     } else if (action === Util.ACTION_DELETE) {
       if (name === '') {
         console.log('Game : START : ------- CASE : Delete/NoName -----> renderDelete');

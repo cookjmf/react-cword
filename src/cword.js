@@ -1625,6 +1625,12 @@ class Cword {
     }
   }
 
+  keyUpImportTextarea(ev) {
+    let elem = ev.currentTarget;
+    let value = elem.value;
+    return value;
+  }
+
   keyUpPlayCell(ev) {
     var elem = ev.currentTarget;
     var id = elem.id;
