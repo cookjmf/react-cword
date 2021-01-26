@@ -24,6 +24,9 @@ class Cword {
     // selected clue
     this.selectedClue = null;
 
+    // import json
+    this.importJson = null;
+
   }
 
   init(size) {
@@ -269,6 +272,23 @@ class Cword {
     return msg;
   
   }
+
+  validateForImport() {
+
+    this.msgMgr.clear();
+
+    // build the grid
+    this.buildGrid();
+  
+    // print grid 
+    // this.printGrid();
+
+    let msg = this.msgMgr.firstMsg();
+    return msg;
+
+  
+  }
+
 
   buildForPlay() {
 
@@ -1623,12 +1643,6 @@ class Cword {
         }
       }
     }
-  }
-
-  keyUpImportTextarea(ev) {
-    let elem = ev.currentTarget;
-    let value = elem.value;
-    return value;
   }
 
   keyUpPlayCell(ev) {

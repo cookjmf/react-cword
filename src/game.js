@@ -105,12 +105,13 @@ class Game extends React.Component {
     } else if (newAction === Util.ACTION_CLEAR) {
 
       this.storeGetNames();
-    } else if (newAction === Util.ACTION_IMPORT) {
+    // } else if (newAction === Util.ACTION_IMPORT) {
 
-      this.msgMgr.addInfo('Enter JSON text below');
-      this.setState({ 
-        msg : this.msgMgr.msg() , updateTimestamp: Util.newDate()
-      });
+    //   this.msgMgr.addInfo('Enter JSON text below');
+
+    //   this.setState({ action: newAction, cword: null,
+    //     msg : this.msgMgr.msg() , updateTimestamp: Util.newDate()
+    //   });
 
     } else {
 
@@ -281,7 +282,19 @@ class Game extends React.Component {
     } else if (action === Util.ACTION_EXPORT) {
       this.storeGetNames();
     } else if (action === Util.ACTION_IMPORT) {
-      this.storeGetNames();
+      let msg = cword.validate();
+      if (msg != null) {
+        this.setState( { 
+          selectedAction: Util.ACTION_TITLE, 
+          selectedSize: Util.SIZE_TITLE, 
+          msg: null, 
+          updateTimestamp: Util.newDate() } 
+          );  
+      } else {
+        this.storeGetNames();
+      }
+      
+
     } else {
 
       // message displayed before action chosen
@@ -305,10 +318,41 @@ class Game extends React.Component {
       });
 
     } else if (id === Util.CONFIRM_IMPORT) {
-      let cword = this.state.cword;
-      this.storeSave(cword);
-    }
 
+      let cword = this.state.cword;
+
+      try {
+        let value = cword.importJson;
+  
+        let cwObj = JSON.parse(value);
+
+        let cwordNew = cword.setupCwordFromStorageObject(cwObj);
+
+        let msg = cwordNew.validateForImport();
+  
+        if (msg == null) {
+    
+          this.storeSave(cwordNew);
+  
+        } else {
+
+          msg.prefix = 'Failed Validation.';
+
+          this.setState( { 
+            msg: msg, 
+            updateTimestamp: Util.newDate() 
+          });
+        }
+
+      } catch (err) {
+        this.msgMgr.addError('Invalid JSON. '+err);
+
+        this.setState( { 
+          msg: this.msgMgr.msg(), 
+          updateTimestamp: Util.newDate() 
+        });
+      }
+    }
   }
 
   onClickParamCell(id) {
@@ -465,18 +509,13 @@ class Game extends React.Component {
     console.log('Game : START : -------------------------------------------->');   
 
     if (value != null && value.length > 0) {
-      let cword = null;
-      try {
-        let cwObj = JSON.parse(value);
-        cword = cword.setupCwordFromStorageObject(cwObj);
 
-        this.msgMgr.addConfirmInfo('', 'Import using this JSON text ?', Util.CONFIRM_IMPORT);
+      let cword = new Cword();
+      cword.importJson = value;
 
-      } catch (err) {
-        this.msgMgr.addError('Invalid JSON. '+err);
-      }
+      this.msgMgr.addConfirmInfo('', 'Import', Util.CONFIRM_IMPORT);
 
-      this.setState({ msg: this.msgMger.msg(), cword: cword,
+      this.setState({ msg: this.msgMgr.msg(), cword: cword,
         updateTimestamp: Util.newDate() }); 
     }
 
@@ -1236,6 +1275,7 @@ class Game extends React.Component {
         <Message         
           msg={ this.state.msg }
           onClickMessageClose={ this.onClickMessageClose }
+          onClickMessageConfirm={ this.onClickMessageConfirm }
         />   
         <Param
           cword = {this.state.cword}

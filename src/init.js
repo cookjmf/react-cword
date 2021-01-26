@@ -133,10 +133,6 @@ class Init extends React.Component {
           existingNames={ this.props.existingNames}               
           onChange={ this.props.onChangeAction }
         />
-        <Name    
-          existingNames={ this.props.existingNames}   
-          onChange={ this.props.onChangeName }
-        />
       </div>
     );
   }
