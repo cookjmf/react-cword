@@ -275,13 +275,13 @@ class Game extends React.Component {
 
       }
     } else if (action === Util.ACTION_CREATE_EXAMPLE) {
-
       this.storeGetNames();
-
     } else if (action === Util.ACTION_DELETE) {
-
       this.storeGetNames();
-
+    } else if (action === Util.ACTION_EXPORT) {
+      this.storeGetNames();
+    } else if (action === Util.ACTION_IMPORT) {
+      this.storeGetNames();
     } else {
 
       // message displayed before action chosen
@@ -295,7 +295,7 @@ class Game extends React.Component {
     console.log('Game : START : onClickMessageConfirm -----> '+id+'------------------->');
     console.log('Game : START : -------------------------------------------->');  
 
-    if (id === 'cw-message-Validate') {
+    if (id === Util.CONFIRM_VALIDATE) {
       let cword = this.state.cword;
       let msg = cword.validate();
 
@@ -304,8 +304,11 @@ class Game extends React.Component {
         updateTimestamp: Util.newDate() 
       });
 
+    } else if (id === Util.CONFIRM_IMPORT) {
+      let cword = this.state.cword;
+      this.storeSave(cword);
     }
-    //'cw-message-'
+
   }
 
   onClickParamCell(id) {
@@ -455,23 +458,19 @@ class Game extends React.Component {
       updateTimestamp: Util.newDate() }); 
   }
 
-  onKeyUpImportTextarea(ev) {
-
-    var elem = ev.currentTarget;
-    var id = elem.id;
+  onKeyUpImportTextarea(value) {
 
     console.log('Game : START : -------------------------------------------->');
-    console.log('Game : START : onKeyUpImportTextarea ----> id : '+id+' ------------->');
+    console.log('Game : START : onKeyUpImportTextarea ----> value : '+value+' ------------->');
     console.log('Game : START : -------------------------------------------->');   
 
-    let value = cword.keyUpImportTextArea(ev);
-    if (value != null) {
+    if (value != null && value.length > 0) {
       let cword = null;
       try {
         let cwObj = JSON.parse(value);
-        cword = setupCwordFromStorageObject(cwObj);
+        cword = cword.setupCwordFromStorageObject(cwObj);
 
-        this.msgMgr.addConfirm('Import using this JSON text ?');
+        this.msgMgr.addConfirmInfo('', 'Import using this JSON text ?', Util.CONFIRM_IMPORT);
 
       } catch (err) {
         this.msgMgr.addError('Invalid JSON. '+err);
@@ -580,7 +579,7 @@ class Game extends React.Component {
           console.log('Game : storeSave : catch : err');
           Util.showErr(err);
 
-          this.resultSave(false, err);
+          this.resultSave(cwObj, false, err);
         }
       ) 
     }  
@@ -703,17 +702,17 @@ class Game extends React.Component {
 
   }
 
-  resultSave(ok, err) {
+  resultSave(cwObj, ok, err) {
     console.log('Game : resultSave : enter');
     let action = this.state.action;
     if (action === Util.ACTION_IMPORT) {
-      // resultSaveImport(ok);
+      this.resultUpdateImport(cwObj, ok, err);
     } else if (action === Util.ACTION_PLAY) {
-      // resultSavePlay(ok);
+      this.resultPlayUpdate(cwObj, ok, err);
     } else if (action === Util.ACTION_CREATE) {
-      this.resultCreateSave(ok, err);
+      this.resultCreateSave(cwObj, ok, err);
     } else if (action === Util.ACTION_UPDATE) {
-      this.resultUpdateSave(ok, err);
+      this.resultUpdateSave(cwObj, ok, err);
     }
   }
 
@@ -721,7 +720,7 @@ class Game extends React.Component {
     console.log('Game : resultUpdate : enter');
     let action = this.state.action;
     if (action === Util.ACTION_IMPORT) {
-      // resultSaveImport(ok);
+      this.resultUpdateImport(ok);
     } else if (action === Util.ACTION_PLAY) {
       this.resultPlayUpdate(cwObj, ok, err);
     } else if (action === Util.ACTION_CREATE) {
@@ -735,7 +734,7 @@ class Game extends React.Component {
     console.log('Game : resultInsert : enter');
     let action = this.state.action;
     if (action === Util.ACTION_IMPORT) {
-      // resultSaveImport(ok);
+      this.resultCreateImport(ok);
     } else if (action === Util.ACTION_PLAY) {
       // not possible
     } else if (action === Util.ACTION_CREATE) {
@@ -765,7 +764,35 @@ class Game extends React.Component {
     if (!ok) {
       this.msgMgr.addError('Failed to save crossword : '+name+' . '+err);
     } else {
-      this.msgMgr.addConfirmInfo( 'Updated crossword : '+name+' at '+Util.date1(), "Validate" );
+      this.msgMgr.addConfirmInfo( 'Saved crossword : '+name+' at '+Util.date1(), "Validate" , Util.CONFIRM_VALIDATE);
+    }
+    let msg = this.msgMgr.msg();
+    this.setState( {
+      msg: msg , cword: cwObj, updateTimestamp: Util.newDate()
+    } );
+  }
+
+  resultCreateImport(cwObj, ok, err) {
+    console.log('Game : resultCreateImport : enter');
+    let name = cwObj.name;
+    if (!ok) {
+      this.msgMgr.addError('Failed to save crossword : '+name+' . '+err);
+    } else {
+      this.msgMgr.addInfo( 'Saved crossword : '+name+' at '+Util.date1(), "Validate" , Util.CONFIRM_VALIDATE);
+    }
+    let msg = this.msgMgr.msg();
+    this.setState( {
+      msg: msg , cword: cwObj, updateTimestamp: Util.newDate()
+    } );
+  }
+
+  resultUpdateImport(cwObj, ok, err) {
+    console.log('Game : resultUpdateImport : enter');
+    let name = cwObj.name;
+    if (!ok) {
+      this.msgMgr.addError('Failed to save crossword : '+name+' . '+err);
+    } else {
+      this.msgMgr.addInfo( 'Saved crossword : '+name+' at '+Util.date1(), "Validate" , Util.CONFIRM_VALIDATE);
     }
     let msg = this.msgMgr.msg();
     this.setState( {
@@ -779,7 +806,7 @@ class Game extends React.Component {
     if (!ok) {
       this.msgMgr.addError('Failed to save crossword : '+name+' . '+err);
     } else {
-      this.msgMgr.addConfirmInfo( 'Updated crossword : '+name+' at '+Util.date1(), "Validate" );
+      this.msgMgr.addConfirmInfo( 'Updated crossword : '+name+' at '+Util.date1(), Util.CONFIRM_VALIDATE);
     }
     let msg = this.msgMgr.msg();
     this.setState( {
@@ -1210,6 +1237,11 @@ class Game extends React.Component {
           msg={ this.state.msg }
           onClickMessageClose={ this.onClickMessageClose }
         />   
+        <Param
+          cword = {this.state.cword}
+          action= { this.state.action }
+          onKeyUpImportTextarea={ this.onKeyUpImportTextarea }
+        />
       </div>
     );
   }

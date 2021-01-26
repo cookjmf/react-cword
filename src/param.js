@@ -14,19 +14,24 @@ class Param extends React.Component {
   render() {
     console.log('Param : render : enter');
 
-    let cword = this.props.cword;
-    
-    let size = cword.size;
-
-    let na = Util.numberedMaxAcross(size);
-    let nd = Util.numberedMaxDown(size);
-
-    let suffix = na+'by'+nd;
-    let boardClassName = 'cw-board-'+suffix;
-    let cluesClassName = 'cw-clues-'+suffix;
-
     let action = this.props.action;
 
+    if (action === Util.ACTION_IMPORT) { 
+      let ph = 'Enter JSON'; 
+      return (
+        <div id="cw-params-cont" className="cw-cont">
+          <textarea id="cw-export-text" className="cw-export-import-text"           
+            placeholder={ph}
+            onKeyUp={(ev) => this.props.onKeyUpImportTextarea(ev.target.value)}
+            onChange={(ev) => this.props.onKeyUpImportTextarea(ev.target.value)}
+            >
+          </textarea>
+        </div>
+      );
+    } 
+
+    let cword = this.props.cword;
+    
     if (action === Util.ACTION_EXPORT) {  
       let cwObj = cword.getStorageObject();
       let cwordText = JSON.stringify(cwObj);
@@ -39,37 +44,44 @@ class Param extends React.Component {
         </div>
       );
    
-    } else {
+    } 
 
-      return (
-        <div id="cw-params-cont" className="cw-cont">
-          <div id="cw-params-board" className={boardClassName}>
-            <ParamBoard
-              cword={ cword}
-              onClickParamCell={ this.props.onClickParamCell }
+    let size = cword.size;
+
+    let na = Util.numberedMaxAcross(size);
+    let nd = Util.numberedMaxDown(size);
+
+    let suffix = na+'by'+nd;
+    let boardClassName = 'cw-board-'+suffix;
+    let cluesClassName = 'cw-clues-'+suffix;
+
+    return (
+      <div id="cw-params-cont" className="cw-cont">
+        <div id="cw-params-board" className={boardClassName}>
+          <ParamBoard
+            cword={ cword}
+            onClickParamCell={ this.props.onClickParamCell }
+          >
+          </ParamBoard>
+          <div id="cw-param-clues" className={cluesClassName}>
+            <a className="cw-clues-info" href={Util.OCR_ONLINE_URL}
+            target = "_blank" rel="noreferrer">
+              Parse clues using OnlineOCR
+            </a>
+            <ParamAcrossClues
+              cword={ cword} 
+              onKeyUp={ this.props.onKeyUpParamAcrossTextarea }
+            >         
+            </ParamAcrossClues>
+            <ParamDownClues
+              cword={ cword} 
+              onKeyUp={ this.props.onKeyUpParamDownTextarea }
             >
-            </ParamBoard>
-            <div id="cw-param-clues" className={cluesClassName}>
-              <a className="cw-clues-info" href={Util.OCR_ONLINE_URL}
-              target = "_blank" rel="noreferrer">
-                Parse clues using OnlineOCR
-              </a>
-              <ParamAcrossClues
-                cword={ cword} 
-                onKeyUp={ this.props.onKeyUpParamAcrossTextarea }
-              >         
-              </ParamAcrossClues>
-              <ParamDownClues
-                cword={ cword} 
-                onKeyUp={ this.props.onKeyUpParamDownTextarea }
-              >
-              </ParamDownClues>
-            </div>
+            </ParamDownClues>
           </div>
         </div>
-      );
-    }
-
+      </div>
+    );
   }
 
 }

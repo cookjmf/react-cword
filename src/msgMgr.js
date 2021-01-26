@@ -22,10 +22,11 @@ class MsgMgr {
     this.infos.push(new Msg('I', text));
   }
 
-  addConfirmInfo(text, confirmText) {
+  addConfirmInfo(text, confirmText, confirmId) {
     console.log("added CINFO : "+text);
     let msg = new Msg('I', text);
     msg.confirmText = confirmText;
+    msg.confirmId = confirmId;
     this.infos.push(msg);
   }
 

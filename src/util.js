@@ -158,6 +158,9 @@ export const COLOR_ORANGE = '#FFE1A4';
 export const COLOR_YELLOW = 'yellow';
 export const COLOR_NONE = 'transparent';
 
+export const CONFIRM_VALIDATE = 'cw-confirm-validate';
+export const CONFIRM_IMPORT = 'cw-confirm-import';
+
 // ---- functions ----
 
 export const toCellId = (y, x) => {

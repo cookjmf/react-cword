@@ -3,6 +3,7 @@ class Msg {
     this.text = text;
     this.sev = sev;
     this.confirmText = '';
+    this.confirmId = '';
     this.detail = '';
     this.prefix = '';
     if (sev === 'E') {
