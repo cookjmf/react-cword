@@ -282,18 +282,10 @@ class Game extends React.Component {
     } else if (action === Util.ACTION_EXPORT) {
       this.storeGetNames();
     } else if (action === Util.ACTION_IMPORT) {
-      let msg = cword.validate();
-      if (msg != null) {
-        this.setState( { 
-          selectedAction: Util.ACTION_TITLE, 
-          selectedSize: Util.SIZE_TITLE, 
-          msg: null, 
-          updateTimestamp: Util.newDate() } 
-          );  
-      } else {
-        this.storeGetNames();
-      }
+
+      this.setState({ msg: null, action: null, cword: null }); 
       
+      this.storeGetNames();
 
     } else {
 
@@ -326,7 +318,9 @@ class Game extends React.Component {
   
         let cwObj = JSON.parse(value);
 
-        let cwordNew = cword.setupCwordFromStorageObject(cwObj);
+        let cwordNew = new Cword();
+
+        cwordNew.setupCwordFromStorageObject(cwObj);
 
         let msg = cwordNew.validateForImport();
   
@@ -759,7 +753,7 @@ class Game extends React.Component {
     console.log('Game : resultUpdate : enter');
     let action = this.state.action;
     if (action === Util.ACTION_IMPORT) {
-      this.resultUpdateImport(ok);
+      this.resultUpdateImport(cwObj, ok, err);
     } else if (action === Util.ACTION_PLAY) {
       this.resultPlayUpdate(cwObj, ok, err);
     } else if (action === Util.ACTION_CREATE) {
@@ -773,7 +767,7 @@ class Game extends React.Component {
     console.log('Game : resultInsert : enter');
     let action = this.state.action;
     if (action === Util.ACTION_IMPORT) {
-      this.resultCreateImport(ok);
+      this.resultCreateImport(cwObj, ok, err);
     } else if (action === Util.ACTION_PLAY) {
       // not possible
     } else if (action === Util.ACTION_CREATE) {
@@ -845,7 +839,7 @@ class Game extends React.Component {
     if (!ok) {
       this.msgMgr.addError('Failed to save crossword : '+name+' . '+err);
     } else {
-      this.msgMgr.addConfirmInfo( 'Updated crossword : '+name+' at '+Util.date1(), Util.CONFIRM_VALIDATE);
+      this.msgMgr.addConfirmInfo( 'Updated crossword : '+name+' at '+Util.date1(), "Validate" ,Util.CONFIRM_VALIDATE);
     }
     let msg = this.msgMgr.msg();
     this.setState( {
