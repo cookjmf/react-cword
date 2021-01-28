@@ -11,7 +11,7 @@ class ParamBoard extends React.Component {
   }
 
   render() {
-    console.log('ParamBoard : render : enter');
+    // console.log('ParamBoard : render : enter');
 
     let cword = this.props.cword;
 
@@ -31,7 +31,7 @@ class ParamBoard extends React.Component {
       <>
       { boardArray.map( 
         (boardArrayKey, index) => { 
-          console.log("create paramCell for boardArrayKey : ..."+boardArrayKey+"... index : "+index);
+          // console.log("create paramCell for boardArrayKey : ..."+boardArrayKey+"... index : "+index);
           return(
             <ParamCell 
               key={boardArrayKey}

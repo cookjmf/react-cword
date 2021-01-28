@@ -6,10 +6,24 @@ class ParamDownClues extends React.Component {
     
     super(props);
     this.state = {};
+    this.textarea = React.createRef();
+  }
+
+  componentDidUpdate() {
+
+    let elem = this.textarea.current;   
+    if (elem != null) {
+      let cword = this.props.cword;
+      if (cword.paramDownCluesSelected) { 
+        elem.selectionStart = cword.paramAcrossCluesStart;
+        elem.selectionEnd = cword.paramAcrossCluesEnd;
+        elem.focus();
+      }
+    } 
   }
   
   render() {
-    console.log('ParamDownClues : render : enter');
+    // console.log('ParamDownClues : render : enter');
 
     let cword = this.props.cword;
 
@@ -17,14 +31,15 @@ class ParamDownClues extends React.Component {
     let suf = size+'by'+size;
     let taClass="cw-clues-param-text-"+suf;
 
-    let vertClues = "";
-    if (cword.vertClues != null) {
-      vertClues = ''+cword.vertClues;
-    }
+    // let vertClues = "";
+    // if (cword.vertClues != null) {
+    //   vertClues = ''+cword.vertClues;
+    // }
     let ph = "Enter Down Clues";
     let text = "";
-    if (vertClues.length > 0) {
-      text = ''+vertClues;
+    if (cword.vertClues.length > 0) {
+      text = ''+cword.vertClues;
+      // text = cword.formatDownClues();
       ph = "";
     } 
 
@@ -37,8 +52,9 @@ class ParamDownClues extends React.Component {
         <div >
           <textarea id="cw-clues-param-down-text" className={taClass}
           placeholder={ph}
-          onChange={(ev) => this.props.onKeyUp(ev.target.value)}
-          onKeyUp={(ev) => this.props.onKeyUp(ev.target.value)}
+          ref={ this.textarea }
+          onChange={(ev) => this.props.onKeyUp(ev)}
+          onKeyUp={(ev) => this.props.onKeyUp(ev)}
           value={text}
           >
           </textarea>

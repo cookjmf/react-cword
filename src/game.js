@@ -33,7 +33,7 @@ class Game extends React.Component {
     this.onKeyUpImportTextarea = this.onKeyUpImportTextarea.bind(this);
     // play
     this.onClickPlayCell = this.onClickPlayCell.bind(this);
-    this.onChangePlayCell = this.onChangePlayCell.bind(this);
+    this.onChangePlayCell = this.onChangePlayCell.bind(this); // TODO : share with on key up
     this.onKeyUpPlayCell = this.onKeyUpPlayCell.bind(this);
     this.onKeyDownPlayCell = this.onKeyDownPlayCell.bind(this);
     this.onClickAcrossClue = this.onClickAcrossClue.bind(this);
@@ -105,13 +105,6 @@ class Game extends React.Component {
     } else if (newAction === Util.ACTION_CLEAR) {
 
       this.storeGetNames();
-    // } else if (newAction === Util.ACTION_IMPORT) {
-
-    //   this.msgMgr.addInfo('Enter JSON text below');
-
-    //   this.setState({ action: newAction, cword: null,
-    //     msg : this.msgMgr.msg() , updateTimestamp: Util.newDate()
-    //   });
 
     } else {
 
@@ -361,31 +354,52 @@ class Game extends React.Component {
     this.storeSave(cword);
   }
 
-  onKeyUpParamAcrossTextarea(value) {
+  onKeyUpParamAcrossTextarea(ev) {
+
+    var elem = ev.currentTarget;
+    var id = elem.id;
+    var value = elem.value;
+
     console.log('Game : START : -------------------------------------------->');
-    console.log('Game : START : onKeyUpParamAcrossTextarea ---->'+value+'------------->');
+    console.log('Game : START : onKeyUpParamAcrossTextarea ---->'+id+'------------->');
     console.log('Game : START : -------------------------------------------->');  
 
     let atext = Util.convertCluesRomanDash(value);
     atext = Util.convertCluesDash(atext);
 
-    let cwObj = this.state.cword;
-    cwObj.horizClues = atext;
-    this.storeSave(cwObj);
+    let cword = this.state.cword;
+    cword.horizClues = atext;
+    cword.paramAcrossCluesSelected = true;
+    cword.paramDownCluesSelected = false;
+    cword.paramAcrossCluesStart = elem.selectionStart;
+    cword.paramAcrossCluesEnd = elem.selectionEnd;
+
+    this.storeSave(cword);
 
   }
 
-  onKeyUpParamDownTextarea(value) {
+  onKeyUpParamDownTextarea(ev) {
+
+    var elem = ev.currentTarget;
+    var id = elem.id;
+    var value = elem.value;
+
     console.log('Game : START : -------------------------------------------->');
-    console.log('Game : START : onKeyUpParamDownTextarea ---->'+value+'------------->');
+    console.log('Game : START : onKeyUpParamDownTextarea ---->'+id+'------------->');
     console.log('Game : START : -------------------------------------------->');  
 
     let dtext = Util.convertCluesRomanDash(value);
     dtext = Util.convertCluesDash(dtext);
 
-    let cwObj = this.state.cword;
-    cwObj.horizClues = dtext;
-    this.storeSave(cwObj);
+    let cword = this.state.cword;
+    cword.vertClues = dtext;
+
+    cword.paramAcrossCluesSelected = false;
+    cword.paramDownCluesSelected = true;
+    cword.paramDownCluesStart = elem.selectionStart;
+    cword.paramDownCluesEnd = elem.selectionEnd;
+
+    this.storeSave(cword);
 
   }
 
@@ -922,6 +936,8 @@ class Game extends React.Component {
       let msg = null;
       if (action === Util.ACTION_PLAY) {
         msg = cword.buildForPlay();
+      } else if (action === Util.ACTION_UPDATE) {
+        msg = cword.buildForUpdate();
       } else if (action === Util.ACTION_EXPORT) {
         this.msgMgr.addInfo('Copy this text and save for future import');
         msg = this.msgMgr.msg();

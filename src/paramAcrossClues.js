@@ -6,10 +6,24 @@ class ParamAcrossClues extends React.Component {
     
     super(props);
     this.state = {};
+    this.textarea = React.createRef();
+  }
+
+  componentDidUpdate() {
+
+    let elem = this.textarea.current;   
+    if (elem != null) {
+      let cword = this.props.cword;
+      if (cword.paramAcrossCluesSelected) { 
+        elem.selectionStart = cword.paramAcrossCluesStart;
+        elem.selectionEnd = cword.paramAcrossCluesEnd;
+        elem.focus();
+      }
+    } 
   }
   
   render() {
-    console.log('ParamAcrossClues : render : enter');
+    // console.log('ParamAcrossClues : render : enter');
 
     let cword = this.props.cword;
 
@@ -17,15 +31,18 @@ class ParamAcrossClues extends React.Component {
     let suf = size+'by'+size;
     let taClass="cw-clues-param-text-"+suf;
 
-    let horizClues = "";
-    if (cword.horizClues != null) {
-      horizClues = ''+cword.horizClues;
-    }
+    // let horizClues = "";
+    // if (cword.horizClues != null) {
+    //   horizClues = ''+cword.horizClues;
+    // }
     let ph = "Enter Across Clues";
     let text = "";
-    if (horizClues.length > 0) {
-      text = ''+horizClues;
+    if (cword.horizClues.length > 0) {
+      text = ''+cword.horizClues;
+      // text = cword.formatAcrossClues();
       ph = "";
+
+      
     } 
 
     return (
@@ -37,8 +54,9 @@ class ParamAcrossClues extends React.Component {
         <div >
           <textarea id="cw-clues-param-across-text" className={taClass}
           placeholder={ph}
-          onKeyUp={(ev) => this.props.onKeyUp(ev.target.value)}
-          onChange={(ev) => this.props.onKeyUp(ev.target.value)}
+          ref={ this.textarea }
+          onKeyUp={(ev) => this.props.onKeyUp(ev)}
+          onChange={(ev) => this.props.onKeyUp(ev)}
           value={text}
           >
           </textarea>

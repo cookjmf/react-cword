@@ -27,6 +27,16 @@ class Cword {
     // import json
     this.importJson = null;
 
+    // across clues
+    this.paramAcrossCluesSelected = false;
+    this.paramAcrossCluesStart = 0;
+    this.paramAcrossCluesEnd = 0;
+
+    // down clues
+    this.paramDownCluesSelected = false;
+    this.paramDownCluesStart = 0;
+    this.paramDownCluesEnd = 0;
+
   }
 
   init(size) {
@@ -291,6 +301,27 @@ class Cword {
 
 
   buildForPlay() {
+
+    this.msgMgr.clear();
+
+    // build the grid
+    this.buildGrid();
+  
+    // print grid 
+    // this.printGrid();
+
+    let msg = this.msgMgr.firstMsg();
+    if (msg != null) {
+
+      msg.prefix = 'Failed Validation.';
+  
+    } 
+
+    return msg;
+  
+  }
+
+  buildForUpdate() {
 
     this.msgMgr.clear();
 
@@ -1863,6 +1894,30 @@ class Cword {
 
     let cell = clue.firstCell;
     this.makeCurrentCell(cell);
+  }
+
+  formatAcrossClues() {
+    let num = this.getMaxAcross();
+    let clues = this.horizClues;
+    const lines = this.getLines(num, clues, 'down');
+    console.log('Setup '+lines.length+' lines');
+    if (lines == null || lines.length === 0) {
+      return clues;
+    }
+    var ret = Util.formatClueLines(lines);
+    return ret;
+  }
+
+  formatDownClues() {
+    let num = this.getMaxDown();
+    let clues = this.vertClues;
+    const lines = this.getLines(num, clues, 'across');
+    console.log('Setup '+lines.length+' lines');
+    if (lines == null || lines.length === 0) {
+      return clues;
+    }
+    var ret = Util.formatClueLines(lines);
+    return ret;
   }
 
 }

@@ -196,6 +196,16 @@ export const removeNewLines = (lines) => {
   return lines;
 }
 
+export const formatClueLines = (lines) => {
+  var ret = '';
+  for (var i=0; i<lines.length; i++) {
+    var line = lines[i];  
+    line = line.replaceAll('\n', ' ');
+    ret = ret + line + '\n';
+  }
+  return ret;
+}
+
 export const isValidName = (name) => {
   if (name == null || 
     name.length < NAME_MIN_LEN || 

@@ -11,7 +11,7 @@ class ParamCell extends React.Component {
 
   
   renderNumber(id, cls, val) {
-    console.log('ParamCell : renderNumber : id : '+id);
+    // console.log('ParamCell : renderNumber : id : '+id);
     return (
       <>
         <div id={id} className={cls} name={id} key={id} readOnly>
@@ -22,7 +22,7 @@ class ParamCell extends React.Component {
   }
 
   renderInput(id, cls, val, onClick) {
-    console.log('ParamCell : renderInput : id : '+id);  
+    // console.log('ParamCell : renderInput : id : '+id);  
     return (
       <>
         <input id={id} className={cls} name={id} key={id} type='text' 
@@ -35,7 +35,7 @@ class ParamCell extends React.Component {
   }
 
   renderInputAsBlank(id, cls, onClick) {
-    console.log('ParamCell : renderInputAsBlank : id : '+id);
+    // console.log('ParamCell : renderInputAsBlank : id : '+id);
   
     const style1 = {
       'backgroundColor': 'black'
@@ -54,7 +54,7 @@ class ParamCell extends React.Component {
   }
 
   renderCell(boardArrayKey, pMaxAcross, pMaxDown, cellMap, onClick) {
-    console.log('ParamCell : renderCell : enter : boardArrayKey : '+boardArrayKey);
+    // console.log('ParamCell : renderCell : enter : boardArrayKey : '+boardArrayKey);
     let y = Util.row(boardArrayKey);
     let x = Util.column(boardArrayKey);
     // let id = 'na-'+Util.cellKey(y,x);
@@ -96,7 +96,7 @@ class ParamCell extends React.Component {
   }
   
   render() {
-    console.log('ParamCell : render : enter');
+    // console.log('ParamCell : render : enter');
 
     // key is "special", even though its been passed in - it does not show in props !!
 
@@ -110,7 +110,7 @@ class ParamCell extends React.Component {
     if (boardArrayKey == null) {
       return <p>E101</p>
     } else {
-      console.log('ParamCell : render : boardArrayKey : '+boardArrayKey);
+      // console.log('ParamCell : render : boardArrayKey : '+boardArrayKey);
 
       let pMaxAcross = numberedMaxAcross;
       let pMaxDown = numberedMaxDown;
