@@ -10,7 +10,7 @@ class ParamAcrossClues extends React.Component {
   }
 
   componentDidUpdate() {
-
+    //  https://stackoverflow.com/questions/53782804/how-to-set-cursor-position-inside-textarea-in-reactjs
     let elem = this.textarea.current;   
     if (elem != null) {
       let cword = this.props.cword;
