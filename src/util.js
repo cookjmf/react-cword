@@ -206,6 +206,16 @@ export const formatClueLines = (lines) => {
   return ret;
 }
 
+export const addIfNotIncludes = (x, y) => {
+  if (x == null) {
+    x = [];
+  }
+  if (!x.includes(y)) {
+    x.push(y);
+  }
+  return x;
+}
+
 export const isValidName = (name) => {
   if (name == null || 
     name.length < NAME_MIN_LEN || 

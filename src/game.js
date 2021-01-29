@@ -39,7 +39,6 @@ class Game extends React.Component {
     this.onClickAcrossClue = this.onClickAcrossClue.bind(this);
     this.onClickDownClue = this.onClickDownClue.bind(this);
     
-
     // message manager
     this.msgMgr = new MsgMgr();
 
@@ -108,7 +107,7 @@ class Game extends React.Component {
 
     } else {
 
-      this.setState({ action: newAction, cword: null,
+      this.setState({ action: newAction, cword: null, msg: null,
         updateTimestamp: Util.newDate() }); 
     }   
   }
@@ -217,8 +216,6 @@ class Game extends React.Component {
 
         } else {
           console.log('Game : setupNew : non example case');
-  
-          // all empty on creation
   
           this.storeSave(cword);
         }
@@ -413,11 +410,18 @@ class Game extends React.Component {
     console.log('Game : START : -------------------------------------------->');  
 
     let cword = this.state.cword;
-    cword.cellClicked(id);
+    let msg = cword.validate();
 
-    this.setState({ msg: null, cword: cword,
-      updateTimestamp: Util.newDate() }); 
+    if (msg != null) {
+      // this.setState({ msg: msg, cword: cword,
+      //   updateTimestamp: Util.newDate() }); 
 
+    } else {
+      cword.cellClicked(id);
+
+      this.setState({ msg: null, cword: cword,
+        updateTimestamp: Util.newDate() }); 
+    }
   }
 
   onChangePlayCell(ev) {
@@ -813,7 +817,9 @@ class Game extends React.Component {
     } else {
       this.msgMgr.addConfirmInfo( 'Saved crossword : '+name+' at '+Util.date1(), "Validate" , Util.CONFIRM_VALIDATE);
     }
+
     let msg = this.msgMgr.msg();
+    
     this.setState( {
       msg: msg , cword: cwObj, updateTimestamp: Util.newDate()
     } );
@@ -828,7 +834,9 @@ class Game extends React.Component {
       this.msgMgr.addInfo( 'Saved crossword : '+name+' at '+Util.date1(), "Validate" , Util.CONFIRM_VALIDATE);
     }
     let msg = this.msgMgr.msg();
-    this.setState( {
+    let existingNames = Util.addIfNotIncludes(this.state.existingNames, cwObj.name);
+
+    this.setState( {existingNames: existingNames,
       msg: msg , cword: cwObj, updateTimestamp: Util.newDate()
     } );
   }
@@ -878,7 +886,9 @@ class Game extends React.Component {
       } 
     }
     let msg = this.msgMgr.msg();
-    this.setState( {
+    let existingNames = Util.addIfNotIncludes(this.state.existingNames, name);
+
+    this.setState( {existingNames: existingNames,
       msg: msg , cword: cwObj, updateTimestamp: Util.newDate()
     } );
   }

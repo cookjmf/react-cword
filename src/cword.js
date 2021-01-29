@@ -1570,7 +1570,11 @@ class Cword {
       this.selectedClue = downClue;
     }
 
-    console.log('Clicked : selectedClue : '+this.selectedClue.uniqLocation());
+    if (this.selectedClue != null) {
+      console.log('Clicked : selectedClue : '+this.selectedClue.uniqLocation());
+    } else {
+      console.log('Clicked : selectedClue : null');
+    }
 
     this.makeCurrentCell(cell);
 

@@ -15,8 +15,8 @@ class ParamDownClues extends React.Component {
     if (elem != null) {
       let cword = this.props.cword;
       if (cword.paramDownCluesSelected) { 
-        elem.selectionStart = cword.paramAcrossCluesStart;
-        elem.selectionEnd = cword.paramAcrossCluesEnd;
+        elem.selectionStart = cword.paramDownCluesStart;
+        elem.selectionEnd = cword.paramDownCluesEnd;
         elem.focus();
       }
     } 
@@ -38,8 +38,14 @@ class ParamDownClues extends React.Component {
     let ph = "Enter Down Clues";
     let text = "";
     if (cword.vertClues.length > 0) {
-      text = ''+cword.vertClues;
-      // text = cword.formatDownClues();
+
+      let msg = cword.validate();
+      if (msg == null) {
+        text = cword.formatDownClues();
+      } else {
+        text = ''+cword.vertClues;
+      }
+
       ph = "";
     } 
 
