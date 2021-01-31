@@ -39,12 +39,13 @@ class ParamDownClues extends React.Component {
     let text = "";
     if (cword.vertClues.length > 0) {
 
-      let msg = cword.validate();
-      if (msg == null) {
-        text = cword.formatDownClues();
-      } else {
-        text = ''+cword.vertClues;
-      }
+      // let msg = cword.buildForPlay();
+      // if (msg == null) {
+      //   text = cword.formatDownClues();
+      // } else {
+      //   text = ''+cword.vertClues;
+      // }
+      text = ''+cword.vertClues;
 
       ph = "";
     } 

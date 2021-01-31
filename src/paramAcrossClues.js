@@ -40,12 +40,13 @@ class ParamAcrossClues extends React.Component {
     let text = "";
     if (cword.horizClues.length > 0) {
 
-      let msg = cword.validate();
-      if (msg == null) {
-        text = cword.formatAcrossClues();
-      } else {
-        text = ''+cword.horizClues;
-      }
+      // let msg = cword.buildForPlay();
+      // if (msg == null) {
+      //   text = cword.formatAcrossClues();
+      // } else {
+      //   text = ''+cword.horizClues;
+      // }
+      text = ''+cword.horizClues;
      
       ph = "";
 

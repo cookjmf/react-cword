@@ -327,9 +327,15 @@ class Cword {
 
     // build the grid
     this.buildGrid();
-  
+
     // print grid 
     // this.printGrid();
+
+    let newHorizClues = this.formatAcrossClues();
+    this.horizClues = newHorizClues;
+
+    let newVertClues = this.formatDownClues();
+    this.vertClues = newVertClues;
 
     let msg = this.msgMgr.firstMsg();
     if (msg != null) {
@@ -337,6 +343,7 @@ class Cword {
       msg.prefix = 'Failed Validation.';
   
     } 
+
 
     return msg;
   

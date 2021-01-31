@@ -171,6 +171,7 @@ class Game extends React.Component {
         // this is an error case
 
         this.msgMgr.addError('Invalid name, reserved for example');
+
         this.setState({ 
           msg : this.msgMgr.msg() , updateTimestamp: Util.newDate()
         });
@@ -198,13 +199,13 @@ class Game extends React.Component {
       let existingNames = this.state.existingNames;
       
       if (!Util.isValidName(name)) {
-        this.msgMgr.addError('Invalid name');
+        this.msgMgr.addError('Invalid name : '+name);
         this.setState({ 
           msg : this.msgMgr.msg() , updateTimestamp: Util.newDate()
         });
   
       } else if (Util.isDuplicateName(existingNames, name)) {
-        this.msgMgr.addError('Duplicate name');
+        this.msgMgr.addError('Duplicate name : '+name);
         this.setState({ 
           msg : this.msgMgr.msg() , updateTimestamp: Util.newDate()
         });
@@ -246,24 +247,24 @@ class Game extends React.Component {
       if (!Util.isValidName(name) || Util.isDuplicateName(existingNames, name)) {
         // force user to choose "Size" again
         this.setState( { 
-          selectedAction: Util.ACTION_TITLE, 
+          selectedAction: Util.ACTION_CREATE, 
           selectedSize: Util.SIZE_TITLE, 
           msg: null, 
           updateTimestamp: Util.newDate() } 
           );  
       } else {
-        let msg = cword.validate();
-        if (msg != null) {
-          this.setState( { 
-            selectedAction: Util.ACTION_TITLE, 
-            selectedSize: Util.SIZE_TITLE, 
-            msg: null, 
-            updateTimestamp: Util.newDate() } 
-            );  
-        } else {
-          this.storeGetNames();
-        }
-
+        // let msg = cword.validate();
+        // if (msg != null) {
+        //   this.setState( { 
+        //     selectedAction: Util.ACTION_CREATE, 
+        //     selectedSize: Util.SIZE_TITLE, 
+        //     msg: null, 
+        //     updateTimestamp: Util.newDate() } 
+        //     );  
+        // } else {
+        //  this.storeGetNames();
+        //}
+        this.storeGetNames();
       }
     } else if (action === Util.ACTION_CREATE_EXAMPLE) {
       this.storeGetNames();
@@ -410,7 +411,7 @@ class Game extends React.Component {
     console.log('Game : START : -------------------------------------------->');  
 
     let cword = this.state.cword;
-    let msg = cword.validate();
+    let msg = cword.buildForPlay();
 
     if (msg != null) {
       // this.setState({ msg: msg, cword: cword,
@@ -789,9 +790,9 @@ class Game extends React.Component {
     } else if (action === Util.ACTION_PLAY) {
       // not possible
     } else if (action === Util.ACTION_CREATE) {
-      this.resultCreateInsert(cwObj, ok, false, err);
+      this.resultCreateInsert(cwObj, ok, err);
     } else if (action === Util.ACTION_CREATE_EXAMPLE) {
-      this.resultCreateInsert(cwObj, ok, true, err);
+      this.resultCreateInsertExample(cwObj, ok, err);
     } else if (action === Util.ACTION_UPDATE) {
       // not possible
     }
@@ -869,21 +870,33 @@ class Game extends React.Component {
     } );
   }
 
-  resultCreateInsert(cwObj, ok, isExample, err) {
+  resultCreateInsert(cwObj, ok, err) {
     console.log('Game : resultCreateInsert : enter');
     let name = cwObj.name;
     if (!ok) {
-      if (isExample) {
-        this.msgMgr.addError('Failed to save example crossword : '+name+'. ' +err);
-      } else {
-        this.msgMgr.addError('Failed to save crossword : '+name+'. ' +err);
-      }
+      this.msgMgr.addError('Failed to save crossword : '+name+'. ' +err);
+      
     } else {
-      if (isExample) {
-        this.msgMgr.addInfo('Created example crossword : '+name+'.');
-      } else {
-        this.msgMgr.addInfo('Created crossword : '+name+', now set blanks and clues');  
-      } 
+      this.msgMgr.addInfo('Created crossword : '+name+', now set blanks and clues');  
+      
+    }
+    let msg = this.msgMgr.msg();
+    let existingNames = Util.addIfNotIncludes(this.state.existingNames, name);
+
+    this.setState( {existingNames: existingNames,
+      msg: msg , cword: cwObj, updateTimestamp: Util.newDate()
+    } );
+  }
+
+  resultCreateInsertExample(cwObj, ok, err) {
+    console.log('Game : resultCreateInsertExample : enter');
+    let name = cwObj.name;
+    if (!ok) {
+      
+      this.msgMgr.addError('Failed to save example crossword : '+name+'. ' +err);
+    } else {
+      
+      this.msgMgr.addInfo('Created example crossword : '+name+'.');
     }
     let msg = this.msgMgr.msg();
     let existingNames = Util.addIfNotIncludes(this.state.existingNames, name);
@@ -1095,6 +1108,8 @@ class Game extends React.Component {
       </div>
     );
   }
+
+  
 
   renderUpdateWithName() {
     // chose update, entered name
@@ -1357,17 +1372,26 @@ class Game extends React.Component {
 
     let name = '';
     let size = '';
+    let nameValid = false;
+    let nameExists = false;
     let cword = this.state.cword;
+    let existingNames = this.state.existingNames;
     if (cword != null) {
       name = cword.name;
       size = cword.size;
+      nameValid = Util.isValidName(name);
+      nameExists = Util.isDuplicateName(existingNames, name);
     }
+    
+    
 
     console.log('Game : START : -------------------------------------------->');
     console.log('Game : START : render ------------------------------------->');
     console.log('Game : START : ------- action : '+action+' ------------------------------------->');
     console.log('Game : START : ------- name : '+name+' ------------------------------------->');
     console.log('Game : START : ------- size : '+size+' ------------------------------------->');
+    console.log('Game : START : ------- nameValid : '+nameValid+' ------------------------------------->');
+    console.log('Game : START : ------- nameExists : '+nameExists+' ------------------------------------->');
     console.log('Game : START : -------------------------------------------->'); 
 
     if (action === Util.ACTION_CREATE) {
@@ -1381,9 +1405,20 @@ class Game extends React.Component {
           console.log('Game : START : ------- CASE : Create/Name/NoSize -----> renderCreateWithName'); 
           return this.renderCreateWithName();
         } else {
-          // name, size has been chosen, cword saved, show message and params
-          console.log('Game : START : ------- CASE : Create/Name/Size -----> renderSetupNew'); 
-          return this.renderSetupNew();
+          if (!nameValid) {
+            console.log('Game : START : ------- CASE : Create/InvalidName/Size -----> renderCreateWithName'); 
+            return this.renderCreateWithName();
+          } else if (!nameExists) {
+            // name, size has been chosen, name is valid, cword failed to save
+            console.log('Game : START : ------- CASE : Create/ValidName/Size/NameNotExists -----> renderCreateWithName'); 
+            return this.renderCreateWithName();
+          } else {
+            // at this point name exists if the save worked
+            // name, size has been chosen, name is valid, cword saved, show message and params
+            console.log('Game : START : ------- CASE : Create/ValidName/Size/NameExists -----> renderSetupNew'); 
+            return this.renderSetupNew();
+          }
+          
         }
       }
     } else if (action === Util.ACTION_CREATE_EXAMPLE) {
