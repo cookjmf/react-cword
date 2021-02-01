@@ -9,28 +9,63 @@ class Param extends React.Component {
   constructor(props) {
     super(props); 
     this.state = {};
+    this.textarea = React.createRef();
+  }
+
+  componentDidUpdate() {
+    console.log('Param : componentDidUpdate : enter');
+    let elem = this.textarea.current;   
+    if (elem != null) {
+      let cword = this.props.cword;
+
+      console.log('paramTextareaSelected = '+cword.paramTextareaSelected);
+      console.log('paramImportStart = '+cword.paramImportStart);
+      console.log('paramImportEnd = '+cword.paramImportEnd);
+
+      if (cword.paramTextareaSelected === Util.TA_IMPORT) { 
+        elem.selectionStart = cword.paramImportStart;
+        elem.selectionEnd = cword.paramImportEnd;
+        elem.focus();
+      }
+    } 
   }
   
   render() {
     console.log('Param : render : enter');
 
     let action = this.props.action;
+    let cword = this.props.cword;
 
     if (action === Util.ACTION_IMPORT) { 
-      let ph = 'Enter JSON'; 
+
+      console.log('importJson = '+cword.importJson);
+      console.log('paramTextareaSelected = '+cword.paramTextareaSelected);
+      console.log('paramImportStart = '+cword.paramImportStart);
+      console.log('paramImportEnd = '+cword.paramImportEnd);
+
+      let ph = "Enter JSON";
+      let text = "";
+      if (cword.importJson.length > 0) {
+        text = ''+cword.importJson; 
+        ph = "";
+      } 
+
       return (
         <div id="cw-params-cont" className="cw-cont">
           <textarea id="cw-export-text" className="cw-export-import-text"           
             placeholder={ph}
-            onKeyUp={(ev) => this.props.onKeyUpImportTextarea(ev.target.value)}
-            onChange={(ev) => this.props.onKeyUpImportTextarea(ev.target.value)}
+            value={text}
+            ref={ this.textarea }
+            onKeyUp={(ev) => this.props.onKeyUp(ev)}
+            onChange={(ev) => this.props.onKeyUp(ev)}
             >
           </textarea>
         </div>
       );
+      
     } 
 
-    let cword = this.props.cword;
+    
     
     if (action === Util.ACTION_EXPORT) {  
       let cwObj = cword.getStorageObject();

@@ -58,7 +58,7 @@ class Game extends React.Component {
   }
 
   componentDidUpdate() {
-    console.log('Game : componentDidUpdate : enter');
+    // console.log('Game : componentDidUpdate : enter');
   }
 
   shouldComponentUpdate(nextProps, nextState) {
@@ -104,6 +104,13 @@ class Game extends React.Component {
     } else if (newAction === Util.ACTION_CLEAR) {
 
       this.storeGetNames();
+
+    } else if (newAction === Util.ACTION_IMPORT) {
+
+      let cword = new Cword();
+
+      this.setState({ action: newAction, cword: cword, msg: null,
+        updateTimestamp: Util.newDate() }); 
 
     } else {
 
@@ -253,17 +260,6 @@ class Game extends React.Component {
           updateTimestamp: Util.newDate() } 
           );  
       } else {
-        // let msg = cword.validate();
-        // if (msg != null) {
-        //   this.setState( { 
-        //     selectedAction: Util.ACTION_CREATE, 
-        //     selectedSize: Util.SIZE_TITLE, 
-        //     msg: null, 
-        //     updateTimestamp: Util.newDate() } 
-        //     );  
-        // } else {
-        //  this.storeGetNames();
-        //}
         this.storeGetNames();
       }
     } else if (action === Util.ACTION_CREATE_EXAMPLE) {
@@ -273,11 +269,18 @@ class Game extends React.Component {
     } else if (action === Util.ACTION_EXPORT) {
       this.storeGetNames();
     } else if (action === Util.ACTION_IMPORT) {
-
-      this.setState({ msg: null, action: null, cword: null }); 
-      
-      this.storeGetNames();
-
+      let msg = this.state.msg;
+      if (msg != null && msg.errorId === Util.ERROR_INVALID_IMPORT_JSON) {
+        // invalid json for import so enable user to update it
+        this.setState( { 
+          selectedAction: Util.ACTION_IMPORT, 
+          msg: null, 
+          updateTimestamp: Util.newDate() } 
+          ); 
+      } else {
+        this.setState({ msg: null, action: null, cword: null });       
+        this.storeGetNames();
+      }
     } else {
 
       // message displayed before action chosen
@@ -316,13 +319,13 @@ class Game extends React.Component {
         let msg = cwordNew.validateForImport();
   
         if (msg == null) {
-    
+          
           this.storeSave(cwordNew);
   
         } else {
-
+   
           msg.prefix = 'Failed Validation.';
-
+          msg.errorId = Util.ERROR_INVALID_IMPORT_JSON;
           this.setState( { 
             msg: msg, 
             updateTimestamp: Util.newDate() 
@@ -330,7 +333,7 @@ class Game extends React.Component {
         }
 
       } catch (err) {
-        this.msgMgr.addError('Invalid JSON. '+err);
+        this.msgMgr.addErrorId('Invalid JSON. '+err, '', Util.ERROR_INVALID_IMPORT_JSON);
 
         this.setState( { 
           msg: this.msgMgr.msg(), 
@@ -357,22 +360,35 @@ class Game extends React.Component {
     var elem = ev.currentTarget;
     var id = elem.id;
     var value = elem.value;
+    let type = ev.type;
 
     console.log('Game : START : -------------------------------------------->');
-    console.log('Game : START : onKeyUpParamAcrossTextarea ---->'+id+'------------->');
-    console.log('Game : START : -------------------------------------------->');  
+    console.log('Game : START : onKeyUpParamAcrossTextarea ----> '+id+' ------------->');
+    console.log('Game : START : onKeyUpParamAcrossTextarea ----> type : '+type+' ------------->');
+    console.log('Game : START : onKeyUpParamAcrossTextarea ----> value : '+value+' ------------->');
+    console.log('Game : START : -------------------------------------------->'); 
 
-    let atext = Util.convertCluesRomanDash(value);
-    atext = Util.convertCluesDash(atext);
+    if (type === 'change') {
 
-    let cword = this.state.cword;
-    cword.horizClues = atext;
-    cword.paramAcrossCluesSelected = true;
-    cword.paramDownCluesSelected = false;
-    cword.paramAcrossCluesStart = elem.selectionStart;
-    cword.paramAcrossCluesEnd = elem.selectionEnd;
+      let atext = Util.convertCluesRomanDash(value);
+      atext = Util.convertCluesDash(atext);
 
-    this.storeSave(cword);
+      let cword = this.state.cword;
+      cword.horizClues = atext;
+      cword.paramTextareaSelected = Util.TA_ACROSS_CLUES;
+      cword.paramAcrossCluesStart = elem.selectionStart;
+      cword.paramAcrossCluesEnd = elem.selectionEnd;
+
+      console.log('horizClues = '+cword.horizClues);
+      console.log('paramTextareaSelected = '+cword.paramTextareaSelected);
+      console.log('paramAcrossCluesStart = '+cword.paramAcrossCluesStart);
+      console.log('paramAcrossCluesEnd = '+cword.paramAcrossCluesEnd);
+
+      this.storeSave(cword);
+
+    } else {
+      console.log('ignore since not a change');
+    }
 
   }
 
@@ -381,23 +397,31 @@ class Game extends React.Component {
     var elem = ev.currentTarget;
     var id = elem.id;
     var value = elem.value;
+    let type = ev.type;
 
     console.log('Game : START : -------------------------------------------->');
-    console.log('Game : START : onKeyUpParamDownTextarea ---->'+id+'------------->');
-    console.log('Game : START : -------------------------------------------->');  
+    console.log('Game : START : onKeyUpParamDownTextarea ----> '+id+' ------------->');
+    console.log('Game : START : onKeyUpParamDownTextarea ----> type : '+type+' ------------->');
+    console.log('Game : START : onKeyUpParamDownTextarea ----> value : '+value+' ------------->');
+    console.log('Game : START : -------------------------------------------->'); 
 
-    let dtext = Util.convertCluesRomanDash(value);
-    dtext = Util.convertCluesDash(dtext);
+    if (type === 'change') {
 
-    let cword = this.state.cword;
-    cword.vertClues = dtext;
+      let dtext = Util.convertCluesRomanDash(value);
+      dtext = Util.convertCluesDash(dtext);
 
-    cword.paramAcrossCluesSelected = false;
-    cword.paramDownCluesSelected = true;
-    cword.paramDownCluesStart = elem.selectionStart;
-    cword.paramDownCluesEnd = elem.selectionEnd;
+      let cword = this.state.cword;
+      cword.vertClues = dtext;
 
-    this.storeSave(cword);
+      cword.paramTextareaSelected = Util.TA_DOWN_CLUES;
+      cword.paramDownCluesStart = elem.selectionStart;
+      cword.paramDownCluesEnd = elem.selectionEnd;
+
+      this.storeSave(cword);
+
+    } else {
+      console.log('ignore since not a change');
+    }
 
   }
 
@@ -515,21 +539,40 @@ class Game extends React.Component {
       updateTimestamp: Util.newDate() }); 
   }
 
-  onKeyUpImportTextarea(value) {
+  onKeyUpImportTextarea(ev) {
+
+    var elem = ev.currentTarget;
+    var id = elem.id;
+    var value = elem.value;
+    let type = ev.type;
 
     console.log('Game : START : -------------------------------------------->');
+    console.log('Game : START : onKeyUpImportTextarea ----> '+id+' ------------->');
+    console.log('Game : START : onKeyUpImportTextarea ----> type : '+type+' ------------->');
     console.log('Game : START : onKeyUpImportTextarea ----> value : '+value+' ------------->');
     console.log('Game : START : -------------------------------------------->');   
 
-    if (value != null && value.length > 0) {
+    if (type === 'change') {
 
-      let cword = new Cword();
+      let cword = this.state.cword;
       cword.importJson = value;
+
+      cword.paramTextareaSelected = Util.TA_IMPORT;
+      cword.paramImportStart = elem.selectionStart;
+      cword.paramImportEnd = elem.selectionEnd;
+
+      console.log('importJson = '+cword.importJson);
+      console.log('paramTextareaSelected = '+cword.paramTextareaSelected);
+      console.log('paramImportStart = '+cword.paramImportStart);
+      console.log('paramImportEnd = '+cword.paramImportEnd);
 
       this.msgMgr.addConfirmInfo('', 'Import', Util.CONFIRM_IMPORT);
 
       this.setState({ msg: this.msgMgr.msg(), cword: cword,
         updateTimestamp: Util.newDate() }); 
+
+    } else {
+      console.log('ignore since not a change');
     }
 
   }
@@ -999,6 +1042,7 @@ class Game extends React.Component {
           action={ this.state.action}
           selectedAction={Util.ACTION_CREATE}         
           selectedName={Util.NAME_TITLE}       
+          existingNames={ this.state.existingNames }
           selectedSize={ Util.SIZE_TITLE }
           onChangeAction={ this.onChangeAction }
           onChangeName={ this.onChangeName }
@@ -1315,7 +1359,7 @@ class Game extends React.Component {
         <Param
           cword = {this.state.cword}
           action= { this.state.action }
-          onKeyUpImportTextarea={ this.onKeyUpImportTextarea }
+          onKeyUp={ this.onKeyUpImportTextarea }
         />
       </div>
     );
@@ -1470,8 +1514,10 @@ class Game extends React.Component {
         return this.renderMessageAfterAction();
       }
     } else if (this.state.action === Util.ACTION_CLEAR) {
+
       console.log('Game : START : ------- CASE : Clear -----> renderInit');
       return this.renderInit();   
+
     } else {
       console.log('Game : START : ------- CASE : Default -----> renderInit');
       return this.renderInit();        

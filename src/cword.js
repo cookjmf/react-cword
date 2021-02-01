@@ -25,17 +25,22 @@ class Cword {
     this.selectedClue = null;
 
     // import json
-    this.importJson = null;
+    this.importJson = '';
 
-    // across clues
-    this.paramAcrossCluesSelected = false;
+    // param text area selected
+    this.paramTextareaSelected = '';
+
+    // across clues textarea
     this.paramAcrossCluesStart = 0;
     this.paramAcrossCluesEnd = 0;
 
-    // down clues
-    this.paramDownCluesSelected = false;
+    // down clues textarea
     this.paramDownCluesStart = 0;
     this.paramDownCluesEnd = 0;
+
+    // import textarea
+    this.paramImportStart = 0;
+    this.paramImportEnd = 0;
 
   }
 

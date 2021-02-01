@@ -1,4 +1,5 @@
 import React from 'react';
+import * as Util from './util';
 
 class ParamAcrossClues extends React.Component {
 
@@ -10,11 +11,17 @@ class ParamAcrossClues extends React.Component {
   }
 
   componentDidUpdate() {
+    console.log('ParamAcrossClues : componentDidUpdate : enter');
     //  https://stackoverflow.com/questions/53782804/how-to-set-cursor-position-inside-textarea-in-reactjs
     let elem = this.textarea.current;   
     if (elem != null) {
       let cword = this.props.cword;
-      if (cword.paramAcrossCluesSelected) { 
+
+      console.log('paramTextareaSelected = '+cword.paramTextareaSelected);
+      console.log('paramAcrossCluesStart = '+cword.paramAcrossCluesStart);
+      console.log('paramAcrossCluesEnd = '+cword.paramAcrossCluesEnd);
+
+      if (cword.paramTextareaSelected === Util.TA_ACROSS_CLUES) { 
         elem.selectionStart = cword.paramAcrossCluesStart;
         elem.selectionEnd = cword.paramAcrossCluesEnd;
         elem.focus();
@@ -23,7 +30,7 @@ class ParamAcrossClues extends React.Component {
   }
   
   render() {
-    // console.log('ParamAcrossClues : render : enter');
+    console.log('ParamAcrossClues : render : enter');
 
     let cword = this.props.cword;
 
@@ -31,25 +38,16 @@ class ParamAcrossClues extends React.Component {
     let suf = size+'by'+size;
     let taClass="cw-clues-param-text-"+suf;
 
-    // let horizClues = "";
-    // if (cword.horizClues != null) {
-    //   horizClues = ''+cword.horizClues;
-    // }
+    console.log('horizClues = '+cword.horizClues);
+    console.log('paramTextareaSelected = '+cword.paramTextareaSelected);
+    console.log('paramAcrossCluesStart = '+cword.paramAcrossCluesStart);
+    console.log('paramAcrossCluesEnd = '+cword.paramAcrossCluesEnd);
 
     let ph = "Enter Across Clues";
     let text = "";
     if (cword.horizClues.length > 0) {
-
-      // let msg = cword.buildForPlay();
-      // if (msg == null) {
-      //   text = cword.formatAcrossClues();
-      // } else {
-      //   text = ''+cword.horizClues;
-      // }
-      text = ''+cword.horizClues;
-     
+      text = ''+cword.horizClues; 
       ph = "";
-
     } 
 
     return (

@@ -1,4 +1,5 @@
 import React from 'react';
+import * as Util from './util';
 
 class ParamDownClues extends React.Component {
 
@@ -14,7 +15,7 @@ class ParamDownClues extends React.Component {
     let elem = this.textarea.current;   
     if (elem != null) {
       let cword = this.props.cword;
-      if (cword.paramDownCluesSelected) { 
+      if (cword.paramTextareaSelected === Util.TA_DOWN_CLUES) { 
         elem.selectionStart = cword.paramDownCluesStart;
         elem.selectionEnd = cword.paramDownCluesEnd;
         elem.focus();
@@ -31,20 +32,10 @@ class ParamDownClues extends React.Component {
     let suf = size+'by'+size;
     let taClass="cw-clues-param-text-"+suf;
 
-    // let vertClues = "";
-    // if (cword.vertClues != null) {
-    //   vertClues = ''+cword.vertClues;
-    // }
     let ph = "Enter Down Clues";
     let text = "";
     if (cword.vertClues.length > 0) {
 
-      // let msg = cword.buildForPlay();
-      // if (msg == null) {
-      //   text = cword.formatDownClues();
-      // } else {
-      //   text = ''+cword.vertClues;
-      // }
       text = ''+cword.vertClues;
 
       ph = "";

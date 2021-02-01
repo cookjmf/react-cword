@@ -161,6 +161,12 @@ export const COLOR_NONE = 'transparent';
 export const CONFIRM_VALIDATE = 'cw-confirm-validate';
 export const CONFIRM_IMPORT = 'cw-confirm-import';
 
+export const ERROR_INVALID_IMPORT_JSON = 'cw-error-invalid-import-json';
+
+export const TA_ACROSS_CLUES = 'ta-clues-across';
+export const TA_DOWN_CLUES = 'ta-clues-down';
+export const TA_IMPORT = 'ta-import';
+
 // ---- functions ----
 
 export const toCellId = (y, x) => {

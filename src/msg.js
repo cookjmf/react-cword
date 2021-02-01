@@ -6,6 +6,7 @@ class Msg {
     this.confirmId = '';
     this.detail = '';
     this.prefix = '';
+    this.errorId = '';
     if (sev === 'E') {
       this.cls = 'cw-message-error';
     } else if (sev === 'W') {

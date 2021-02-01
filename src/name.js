@@ -23,11 +23,13 @@ class Name extends React.Component {
     }
 
     let names = [];
-    names.push(Util.NAME_TITLE);
+    
     for (let i=0; i<existingNames.length; i++) {
       names.push(existingNames[i]);
     }
     names.sort();
+
+    names.unshift(Util.NAME_TITLE);
 
     for (let i=0; i<names.length; i++) {
       let id = ''+(i+1);

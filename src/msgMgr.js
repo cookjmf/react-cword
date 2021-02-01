@@ -12,6 +12,14 @@ class MsgMgr {
     this.errors.push(msg);
   }
 
+  addErrorId(text, text2, errorId) {
+    console.log("added ERROR : "+text);
+    let msg = new Msg('E', text);
+    msg.detail = text2;
+    msg.errorId = errorId;
+    this.errors.push(msg);
+  }
+
   addWarn(text) {
     console.log("added WARN : "+text);
     this.warnings.push(new Msg('W', text));
@@ -23,7 +31,7 @@ class MsgMgr {
   }
 
   addConfirmInfo(text, confirmText, confirmId) {
-    console.log("added CINFO : "+text);
+    console.log("added CINFO : ["+text+"],["+confirmText+"],["+confirmId+"]");
     let msg = new Msg('I', text);
     msg.confirmText = confirmText;
     msg.confirmId = confirmId;

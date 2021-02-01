@@ -20,6 +20,7 @@ class Init extends React.Component {
       <div id="cw-init-cont" className="cw-cont"> 
         <Action                
           selected= { this.props.selectedAction }  
+          existingNames={ this.props.existingNames}  
           onChange={ this.props.onChangeAction }
         />
         <NewName       
