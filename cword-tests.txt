@@ -90,6 +90,8 @@ Test8
 TODO:
 
 - when you enter blanks in update the keyboard pops up on Ipad
+   - this is auto-complete - should be fixed
 - Select All pops up on second click (not double click) on Ipad
 
 - need to support size 15
+   - done
