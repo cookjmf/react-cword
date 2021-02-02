@@ -585,8 +585,13 @@ class Game extends React.Component {
 
   storeGet(name) {
     console.log('Game : storeGet : enter : name : '+name);
+
+    let url = Util.apiUrl()+'/cwords/name/'+name;
+    let method = 'GET';
+
+    console.log('Game : storeGet : ... url = '+url+' ... method = '+method);
   
-    fetch('/cwords/name/'+name)
+    fetch(url)
     .then(
       response => {
         return response.json();
@@ -612,8 +617,13 @@ class Game extends React.Component {
     let name = cword.name;
     console.log('Game : storeDelete : enter : name : '+name);
   
-    fetch('/cwords/name/'+name, {
-      method: 'DELETE',
+    let url = Util.apiUrl()+'/cwords/name/'+name;
+    let method = 'DELETE';
+
+    console.log('Game : storeDelete : ... url = '+url+' ... method = '+method);
+
+    fetch(url, {
+      method: method,
     })
     .then(
       response => {
@@ -647,8 +657,13 @@ class Game extends React.Component {
     if (action === Util.ACTION_PLAY || action === Util.ACTION_UPDATE) {
       this.storeUpdate(cwObj);
     } else {
+
+      let url = Util.apiUrl()+'/cwords';
+      let method = 'GET';
+
+      console.log('Game : storeSave : ... url = '+url+' ... method = '+method);
   
-      fetch('/cwords')
+      fetch(url)
       .then(
         response => {
           return response.json();
@@ -686,8 +701,14 @@ class Game extends React.Component {
   storeInsert(cwObj) {
     console.log('Game : storeInsert : enter');
     let objectForStore = cwObj.getStorageObject();
-    fetch('/cwords', {
-      method: 'POST', 
+
+    let url = Util.apiUrl()+'/cwords';
+    let method = 'POST';
+
+    console.log('Game : storeInsert : ... url = '+url+' ... method = '+method);
+
+    fetch(url, {
+      method: method, 
       headers: {
        'Content-type': 'application/json; charset=UTF-8' 
       },
@@ -717,8 +738,14 @@ class Game extends React.Component {
     console.log('Game : storeUpdate : enter');
 
     let objectForStore = cwObj.getStorageObject();
-    fetch('/cwords/name/'+cwObj.name, {
-      method: 'PUT', 
+
+    let url = Util.apiUrl()+'/cwords/name/'+cwObj.name;
+    let method = 'PUT';
+
+    console.log('Game : storeInsert : ... url = '+url+' ... method = '+method);
+
+    fetch(url, {
+      method: method, 
       headers: {
        'Content-type': 'application/json; charset=UTF-8' 
       },
@@ -746,7 +773,13 @@ class Game extends React.Component {
   
   storeGetNames() {
     console.log('Game : storeGetNames : enter');
-    fetch('/cwords')
+
+    let url = Util.apiUrl()+'/cwords';
+    let method = 'GET';
+
+    console.log('Game : storeGetNames : ... url = '+url+' ... method = '+method);
+
+    fetch(url)
       .then(
         response => {
           return response.json();

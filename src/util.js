@@ -448,3 +448,26 @@ export const printGridDebug = () => {
 export const uniqLocation = (y,x,isAcross) => {
   return y+'.'+x+'.'+direction(isAcross);
 }
+
+export const apiUrl = () => {
+  // let val = "http://localhost:8080";
+
+  // --> using the above gives this error:
+
+  // Access to fetch at 'http://localhost:8080/cwords' from origin 'http://localhost:3000' 
+  // has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present 
+  // on the requested resource. If an opaque response serves your needs, 
+  // set the request's mode to 'no-cors' to fetch the resource with CORS disabled.
+
+  let val = "";
+
+  // --> using an empty value depends on this setting in package.json when in dev mode
+
+  // "proxy": "http://localhost:8080"
+
+  let customVal = process.env.REACT_CWORD_API_URL;
+  if (customVal != null && customVal.length > 0) {
+    val = ''+customVal;
+  }
+  return val;
+}
