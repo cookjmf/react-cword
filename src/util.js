@@ -360,7 +360,7 @@ export const numberedMaxDown = (size) => {
 
 export const size = (maxAcross, maxDown) => {
   // can be replaced for more complex values
-  return 1 * maxAcross;
+  return '' + maxAcross;
 }
 
 export const cellKey = (y,x) => {

@@ -136,10 +136,44 @@ class Cword {
   }
 
   setupCwordFromStorageObject(cwObj) {
-    this.name = cwObj.name;
+    if ( cwObj.hasOwnProperty('name') ) {
+      this.name = cwObj.name;
+    } else {
+      this.msgMgr.addError("No name.");
+      return;
+    }
+    if ( !cwObj.hasOwnProperty('maxAcross') ) {
+      this.msgMgr.addError("No maxAcross.");
+      return;
+    }
+    if ( !cwObj.hasOwnProperty('maxDown') ) {
+      this.msgMgr.addError("No maxDown.");
+      return;
+    }
     this.size = Util.size(cwObj.maxAcross, cwObj.maxDown);
+    if (!Util.SIZES_ALLOWED.includes(this.size)) {
+      this.msgMgr.addError("Invalid value for maxAcross/maxDown.");
+      return;
+    }
+    if ( !cwObj.hasOwnProperty('horizClues') ) {
+      this.msgMgr.addError("No horizClues.");
+      return;
+    }
     this.horizClues = cwObj.horizClues;
+    if ( !cwObj.hasOwnProperty('vertClues') ) {
+      this.msgMgr.addError("No vertClues.");
+      return;
+    }
     this.vertClues = cwObj.vertClues;
+    if ( !cwObj.hasOwnProperty('blanks') ) {
+      this.msgMgr.addError("No blanks.");
+      return;
+    }
+    if ( !cwObj.hasOwnProperty('cellValues') ) {
+      // this.msgMgr.addError("No cellValues.");
+      // return;
+      cwObj.cellValues = {};
+    }
     this.setupCellMap(cwObj.maxAcross, cwObj.maxDown, cwObj.blanks, cwObj.cellValues);
 
   }

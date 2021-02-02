@@ -316,11 +316,16 @@ class Game extends React.Component {
 
         cwordNew.setupCwordFromStorageObject(cwObj);
 
-        let msg = cwordNew.validateForImport();
-  
+        let msg = cwordNew.msgMgr.msg();
+        
         if (msg == null) {
+
+          msg = cwordNew.validateForImport();
+  
+          if (msg == null) {
           
-          this.storeSave(cwordNew);
+            this.storeSave(cwordNew);
+          }
   
         } else {
    
@@ -757,7 +762,22 @@ class Game extends React.Component {
           for (let i=0; i<data.length; i++) {
             let row = data[i];
             let name = row.name;
-            names.push(name);
+            if (Util.isExample(name)) {
+              if (Util.isDuplicateName(names, name)) {
+                console.log('Game : storeGetNames : WARNING : found duplicate example name in store : ...'+name+'...');
+              } else {
+                names.push(name);
+              } 
+            } else if (Util.isValidName(name)) {
+              if (Util.isDuplicateName(names, name)) {
+                console.log('Game : storeGetNames : WARNING : found duplicate name in store : ...'+name+'...');
+              } else {
+                names.push(name);
+              }            
+            } else {
+              console.log('Game : storeGetNames : WARNING : found invalid name in store : ...'+name+'...');
+            }
+          
           }
           this.resultGetNames(true, names, null);
           
