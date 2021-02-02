@@ -9,8 +9,6 @@ import MsgMgr from './msgMgr';
 
 import * as Util from './util';
 
-// version 210115_0821
-
 class Game extends React.Component {
   constructor(props) {   
     super(props);
@@ -762,6 +760,7 @@ class Game extends React.Component {
           for (let i=0; i<data.length; i++) {
             let row = data[i];
             let name = row.name;
+            console.log('Game : storeGetNames : ... i='+i+' ...name='+name+'...');
             if (Util.isExample(name)) {
               if (Util.isDuplicateName(names, name)) {
                 console.log('Game : storeGetNames : WARNING : found duplicate example name in store : ...'+name+'...');

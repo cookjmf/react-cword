@@ -9,7 +9,7 @@ class PlayCellBg extends React.Component {
     this.state = {};
   }
 
-  renderCell(boardArrayKey, cword, updateTimestamp) {
+  renderCell(boardArrayKey, cword) {
     // console.log('PlayCellBg : renderCell : enter : boardArrayKey : '+boardArrayKey);
     let y = Util.row(boardArrayKey);
     let x = Util.column(boardArrayKey);
@@ -30,9 +30,6 @@ class PlayCellBg extends React.Component {
       let id = 'itembg-'+Util.toCellId(y, x);
 
       let name = id;
-      if (Util.layerDebug) {
-        name = id+'-'+updateTimestamp;
-      }
 
       // the 1 is needed for numbered grid
       let cellGridRow = y + 1;
@@ -63,7 +60,6 @@ class PlayCellBg extends React.Component {
     // key is "special", even though its been passed in - it does not show in props !!
 
     let cword = this.props.cword;
-    let updateTimestamp= this.props.updateTimestamp;
 
     let boardArrayKey = this.props.boardArrayKey;
     if (boardArrayKey == null) {
@@ -73,7 +69,7 @@ class PlayCellBg extends React.Component {
 
       return (
         <>
-        {this.renderCell(boardArrayKey, cword, updateTimestamp)}
+        {this.renderCell(boardArrayKey, cword)}
         </>
       );
     }

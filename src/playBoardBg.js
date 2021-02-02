@@ -35,7 +35,6 @@ class PlayBoardBg extends React.Component {
               key={boardArrayKey}
               boardArrayKey={boardArrayKey}
               cword={cword}
-              updateTimestamp={ this.props.updateTimestamp }
             />
           );
         } 

@@ -229,9 +229,9 @@ export const isValidName = (name) => {
     name.startsWith('--')) {
     return false;
   }
-  if (name !== null && name.startsWith("example_")) {
-    return false;
-  }
+  // if (name !== null && name.startsWith("example_")) {
+  //   return false;
+  // }
   return true;
 }
 
@@ -440,10 +440,8 @@ export const showErr = (err) => {
   }
 }
 
-export const layerDebug = () => {
-  // debugging flag to force all the Play cell layers (input, label, bg) to be
-  // updated in the DOM every time the Play is re-rendered.
-  // works by appending updateTimestamp to the name of each component.
+export const printGridDebug = () => {
+  // debugging flag to print the grid
   return false;
 }
 

@@ -136,44 +136,51 @@ class Cword {
   }
 
   setupCwordFromStorageObject(cwObj) {
-    if ( cwObj.hasOwnProperty('name') ) {
-      this.name = cwObj.name;
-    } else {
+    if ( !cwObj.hasOwnProperty('name') ) {
       this.msgMgr.addError("No name.");
       return;
     }
+    this.name = cwObj.name;
+
     if ( !cwObj.hasOwnProperty('maxAcross') ) {
       this.msgMgr.addError("No maxAcross.");
       return;
     }
+
     if ( !cwObj.hasOwnProperty('maxDown') ) {
       this.msgMgr.addError("No maxDown.");
       return;
     }
+
     this.size = Util.size(cwObj.maxAcross, cwObj.maxDown);
     if (!Util.SIZES_ALLOWED.includes(this.size)) {
       this.msgMgr.addError("Invalid value for maxAcross/maxDown.");
       return;
     }
+
     if ( !cwObj.hasOwnProperty('horizClues') ) {
       this.msgMgr.addError("No horizClues.");
       return;
     }
     this.horizClues = cwObj.horizClues;
+
     if ( !cwObj.hasOwnProperty('vertClues') ) {
       this.msgMgr.addError("No vertClues.");
       return;
     }
     this.vertClues = cwObj.vertClues;
-    if ( !cwObj.hasOwnProperty('blanks') ) {
-      this.msgMgr.addError("No blanks.");
-      return;
-    }
-    if ( !cwObj.hasOwnProperty('cellValues') ) {
-      // this.msgMgr.addError("No cellValues.");
-      // return;
-      cwObj.cellValues = {};
-    }
+
+    // if ( !cwObj.hasOwnProperty('blanks') ) {
+    //   this.msgMgr.addError("No blanks.");
+    //   return;
+    // }
+
+    // if ( !cwObj.hasOwnProperty('cellValues') ) {
+    //   // this.msgMgr.addError("No cellValues.");
+    //   // return;
+    //   cwObj.cellValues = {};
+    // }
+
     this.setupCellMap(cwObj.maxAcross, cwObj.maxDown, cwObj.blanks, cwObj.cellValues);
 
   }
@@ -304,7 +311,7 @@ class Cword {
     this.buildGrid();
   
     // print grid 
-    // this.printGrid();
+    this.printGrid();
 
     let msg = this.msgMgr.firstMsg();
     if (msg != null) {
@@ -330,7 +337,7 @@ class Cword {
     this.buildGrid();
   
     // print grid 
-    // this.printGrid();
+    this.printGrid();
 
     let msg = this.msgMgr.firstMsg();
     return msg;
@@ -347,7 +354,7 @@ class Cword {
     this.buildGrid();
   
     // print grid 
-    // this.printGrid();
+    this.printGrid();
 
     let msg = this.msgMgr.firstMsg();
     if (msg != null) {
@@ -368,7 +375,7 @@ class Cword {
     this.buildGrid();
 
     // print grid 
-    // this.printGrid();
+    this.printGrid();
 
     let newHorizClues = this.formatAcrossClues();
     this.horizClues = newHorizClues;
@@ -998,27 +1005,44 @@ class Cword {
   }
 
   setupLabels() {
+    // console.log('Enter cword.setupLabels');
+    // key = label value (number)   value = cell
+    let labelMap = new Map();
 
     // setup labels
-    var latestLabelNum = 0;
+    let latestLabelNum = 0;
     // var n = 0;
     for (var y=1; y<=this.getMaxDown(); y++) {
       for (var x=1; x<=this.getMaxAcross(); x++) {
         // n++;
-        // var cellKey = x+'.'+y;
-        var cellKey = Util.cellKey(y,x); // x+'.'+y;
+        var cellKey = Util.cellKey(y,x); 
+
         // console.log('Cell#'+n+' : ... ====> .... row = '+y+' .... col = '+x);
         var c = this.cellMap.get(cellKey);
         if (c == null) {
           continue;
         } 
+
+        // the label for the cell must be zero at this point
+        c.label = 0;
                   
         var acrossClue = c.acrossClue;
         if (acrossClue != null) {
           // console.log('.... AcrossClue : '+acrossClue.toInputFormat());
           var acrossPos = c.acrossPos;
+          
           if (acrossPos === 0) {
+
             latestLabelNum++;
+            // console.log('............. AcrossClue : Its the first cell, try to assign next label number : '+latestLabelNum);
+            let existCell = labelMap.get(latestLabelNum);
+            if (existCell == null) {
+              labelMap.set(latestLabelNum, c);
+            } else {
+              console.log('ERROR ..... AcrossClue : Label cannot be used by cell: '+c.getKey()+' since used by cell: '+existCell.getKey());
+              throw new Error('AcrossClue : Label cannot be used by cell: '+c.getKey()+' since used by cell: '+existCell.getKey());
+            }
+
             c.label = latestLabelNum;
             // console.log('............. Label via ACROSS clue ===> '+c.label);
             acrossClue.firstCell = c;
@@ -1028,7 +1052,10 @@ class Cword {
             // console.log('.... cell acrossLabel = '+c.acrossLabel);
   
             // console.log('.... clue firstCell = '+acrossClue.firstCell.toId());
-          }
+          } 
+          // else {
+          //   console.log('............. AcrossClue : Its NOT the first cell');
+          // }
         } 
   
         var downClue = c.downClue;
@@ -1037,14 +1064,33 @@ class Cword {
                       
           var downPos = c.downPos;
           if (downPos === 0) {
+           
             // only assign a new label if there is no label on the cell already
             if (c.label === 0) {
+              // console.log('............. DownClue : no label on cell');
               latestLabelNum++;
+              // console.log('............. DownClue : Its the first cell, try to assign next label number : '+latestLabelNum);
+              let existCell = labelMap.get(latestLabelNum);
+              if (existCell == null) {
+                labelMap.set(latestLabelNum, c);
+              } else {
+                console.log('ERROR ..... DownClue : Label cannot be used by cell: '+c.getKey()+' since used by cell: '+existCell.getKey());
+                throw new Error('DownClue : Label cannot be used by cell: '+c.getKey()+' since used by cell: '+existCell.getKey());
+              }
+
               c.label = latestLabelNum;
               // console.log('............. Label via DOWN clue ===> '+c.label);
             } else {
-              c.label = latestLabelNum;
-              // console.log('............. Label via DOWN (re-use ACROSS) clue ===> '+c.label);
+              // there is a label in the cell already - check that its the first cell of the across clue
+              // console.log('............. DownClue : label exists on cell : '+c.label);
+              if (acrossPos === 0) {
+                // console.log('............. DownClue : is the first cell of across clue, so will use SAME label');
+                c.label = latestLabelNum;
+                // console.log('............. Label via DOWN (re-use ACROSS) clue ===> '+c.label);
+              } else {
+                console.log('ERROR ..... DownClue : Label '+c.label+' cannot be used by cell: '+c.getKey()+' since not first Cell of across clue');
+                throw new Error('DownClue : Label '+c.label+' cannot be used by cell: '+c.getKey()+' since not first Cell of across clue');
+              }
             }
                         
             downClue.firstCell = c;
@@ -1055,10 +1101,14 @@ class Cword {
   
             // console.log('.... clue firstCell = '+downClue.firstCell.toId());
                         
-          }
+          } 
+          // else {
+          //  console.log('............. DownClue : Its NOT the first cell');
+          // }
         }
       }
     }
+    // console.log('Exit cword.setupLabels');
   }
 
   setupData() {
@@ -1304,212 +1354,212 @@ class Cword {
     }
   }
 
-  // printGrid() {
-  //   this.printCells();
-  //   this.printLabels();
-  //   this.printAcrossLabels();
-  //   this.printDownLabels();
-  //   this.printAcrossClues();
-  //   this.printDownClues();
-  // }
+  printGrid() {
+    if (Util.printGridDebug()) {
+      this.printCells();
+      this.printLabels();
+      this.printAcrossLabels();
+      this.printDownLabels();
+      this.printAcrossClues();
+      this.printDownClues();
+    }
+  }
 
+  printCells() {
 
+    let maxAcross = this.getMaxAcross();
+    let maxDown = this.getMaxDown();
 
-  // printCells() {
-
-  //   let maxAcross = this.getMaxAcross();
-  //   let maxDown = this.getMaxDown();
-
-  //   var hdr = Util.header(maxAcross);
-  //   // console.log('Text:');
-  //   // console.log(hdr);  
-  //   var acrossClue = '';
-  //   var downClue = '';
-  //   for (var y=1; y<=maxDown; y++) {
-  //     var row = '  '+Util.formatNum(y)+ ' | ';
-  //     for (var x=1; x<=maxAcross; x++) {
-  //       var cellKey = Util.cellKey(y,x); // x+"."+y;
-  //       var c = this.cellMap.get(cellKey);
-  //       if (c == null) {
-  //         row += '   .';
-  //       } else {
+    var hdr = Util.header(maxAcross);
+    console.log('Text:');
+    console.log(hdr);  
+    var acrossClue = '';
+    var downClue = '';
+    for (var y=1; y<=maxDown; y++) {
+      var row = '  '+Util.formatNum(y)+ ' | ';
+      for (var x=1; x<=maxAcross; x++) {
+        var cellKey = Util.cellKey(y,x); // x+"."+y;
+        var c = this.cellMap.get(cellKey);
+        if (c == null) {
+          row += '   .';
+        } else {
   
-  //         // check based on adjacent cell being available
-  //         if (this.hasCellAdjacentAcross(c, 1) || this.hasCellAdjacentAcross(c, -1)) {
-  //           acrossClue = c.acrossClue;
-  //           if (acrossClue == null) {
-  //             // console.log('Cell at '+cellKey+ ' has no across clue and should have one');
-  //             this.msgMgr.addWarn('printCells : Cell at ( row : '+y+' ; column : '+x+' ) no across clue and should have one');
-  //           }
-  //         }
-  //         if (this.hasCellAdjacentDown(c, 1) || this.hasCellAdjacentDown(c, -1)) {
-  //           downClue = c.downClue;
-  //           if (downClue == null) {
-  //             // console.log('Cell at '+cellKey+ ' has no down clue and should have one');
-  //             this.msgMgr.addWarn('printCells : Cell at ( row : '+y+' ; column : '+x+' ) no down clue and should have one');
-  //           }
-  //         }
+          // check based on adjacent cell being available
+          if (this.hasCellAdjacentAcross(c, 1) || this.hasCellAdjacentAcross(c, -1)) {
+            acrossClue = c.acrossClue;
+            if (acrossClue == null) {
+              // console.log('Cell at '+cellKey+ ' has no across clue and should have one');
+              this.msgMgr.addWarn('printCells : Cell at ( row : '+y+' ; column : '+x+' ) no across clue and should have one');
+            }
+          }
+          if (this.hasCellAdjacentDown(c, 1) || this.hasCellAdjacentDown(c, -1)) {
+            downClue = c.downClue;
+            if (downClue == null) {
+              // console.log('Cell at '+cellKey+ ' has no down clue and should have one');
+              this.msgMgr.addWarn('printCells : Cell at ( row : '+y+' ; column : '+x+' ) no down clue and should have one');
+            }
+          }
   
-  //         // simpler check - make sure each cell has at least one across / down clue
-  //         acrossClue = c.acrossClue;
-  //         if (acrossClue != null) {
-  //           var acrossValue = c.acrossValue;
-  //           row += '   '+Util.formatNum(acrossValue);
-  //         } else {
-  //           downClue = c.downClue;
-  //           if (downClue != null) {
-  //             var downValue = c.downValue;
-  //             row += '   '+Util.formatNum(downValue);
-  //           } else {
-  //             // console.log('Cell at '+cellKey+ ' has no across/down clue');
-  //             this.msgMgr.addWarn('printCells : Cell at ( row : '+y+' ; column : '+x+' ) has no across or down clue');
-  //           }
-  //         }
-  //       }
-  //     }
-  //     // console.log(row);
-  //   }
-  // }
+          // simpler check - make sure each cell has at least one across / down clue
+          acrossClue = c.acrossClue;
+          if (acrossClue != null) {
+            var acrossValue = c.acrossValue;
+            row += '   '+Util.formatNum(acrossValue);
+          } else {
+            downClue = c.downClue;
+            if (downClue != null) {
+              var downValue = c.downValue;
+              row += '   '+Util.formatNum(downValue);
+            } else {
+              // console.log('Cell at '+cellKey+ ' has no across/down clue');
+              this.msgMgr.addWarn('printCells : Cell at ( row : '+y+' ; column : '+x+' ) has no across or down clue');
+            }
+          }
+        }
+      }
+      console.log(row);
+    }
+  }
 
-  // printLabels() {
+  printLabels() {
 
-  //   let maxAcross = this.getMaxAcross();
-  //   let maxDown = this.getMaxDown();
+    let maxAcross = this.getMaxAcross();
+    let maxDown = this.getMaxDown();
 
-  //   var hdr = Util.header(maxAcross);
+    var hdr = Util.header(maxAcross);
 
-  //   // console.log('Labels:');
-  //   // console.log(hdr);
+    console.log('Labels:');
+    console.log(hdr);
   
-  //   for (var y=1; y<=maxDown; y++) {
-  //     var row = '  '+Util.formatNum(y)+ ' | ';
-  //     for (var x=1; x<=maxAcross; x++) {
-  //       var cellKey = Util.cellKey(y,x); // x+"."+y;
-  //       var c = this.cellMap.get(cellKey);
-  //       if (c == null) {
-  //         row += '   .';
-  //       } else {
-  //         var label = c.label;
-  //         if (label > 0) {
-  //           row += ' '+Util.formatNum(label);
-  //         } else {
-  //           row += '   x';
-  //         }
-  //       }
-  //     }
-  //     // console.log(row);
-  //   }
-  // }
+    for (var y=1; y<=maxDown; y++) {
+      var row = '  '+Util.formatNum(y)+ ' | ';
+      for (var x=1; x<=maxAcross; x++) {
+        var cellKey = Util.cellKey(y,x); // x+"."+y;
+        var c = this.cellMap.get(cellKey);
+        if (c == null) {
+          row += '   .';
+        } else {
+          var label = c.label;
+          if (label > 0) {
+            row += ' '+Util.formatNum(label);
+          } else {
+            row += '   x';
+          }
+        }
+      }
+      console.log(row);
+    }
+  }
   
-  // printAcrossLabels() {
+  printAcrossLabels() {
 
-  //   let maxAcross = this.getMaxAcross();
-  //   let maxDown = this.getMaxDown();
+    let maxAcross = this.getMaxAcross();
+    let maxDown = this.getMaxDown();
 
-  //   var hdr = Util.header(maxAcross);
+    var hdr = Util.header(maxAcross);
 
-  //   // console.log('AcrossLabels:');
-  //   // console.log(hdr);
+    console.log('AcrossLabels:');
+    console.log(hdr);
   
-  //   for (var y=1; y<=maxDown; y++) {
-  //     var row = '  '+Util.formatNum(y)+ ' | ';
-  //     for (var x=1; x<=maxAcross; x++) {
-  //       var cellKey = Util.cellKey(y,x); // x+"."+y;
-  //       var c = this.cellMap.get(cellKey);
-  //       if (c == null) {
-  //         row += '   .';
-  //       } else {
-  //         var acrossClue = c.acrossClue;
-  //         if (acrossClue != null) {
-  //           var aLabel = c.acrossLabel;
-  //           row += ' '+Util.formatNum(aLabel);
-  //         } else {
-  //           row += '   x';
-  //         }
-  //       }
-  //     }
-  //     // console.log(row);
-  //   }
-  // }
+    for (var y=1; y<=maxDown; y++) {
+      var row = '  '+Util.formatNum(y)+ ' | ';
+      for (var x=1; x<=maxAcross; x++) {
+        var cellKey = Util.cellKey(y,x); // x+"."+y;
+        var c = this.cellMap.get(cellKey);
+        if (c == null) {
+          row += '   .';
+        } else {
+          var acrossClue = c.acrossClue;
+          if (acrossClue != null) {
+            var aLabel = c.acrossLabel;
+            row += ' '+Util.formatNum(aLabel);
+          } else {
+            row += '   x';
+          }
+        }
+      }
+      console.log(row);
+    }
+  }
   
-  // printDownLabels() {
+  printDownLabels() {
 
-  //   let maxAcross = this.getMaxAcross();
-  //   let maxDown = this.getMaxDown();
+    let maxAcross = this.getMaxAcross();
+    let maxDown = this.getMaxDown();
 
-  //   var hdr = Util.header(maxAcross);
+    var hdr = Util.header(maxAcross);
 
-  //   // console.log('DownLabels:');
-  //   // console.log(hdr);
+    console.log('DownLabels:');
+    console.log(hdr);
   
-  //   for (var y=1; y<=maxDown; y++) {
-  //     var row = '  '+Util.formatNum(y)+ ' | ';
-  //     for (var x=1; x<=maxAcross; x++) {
-  //       var cellKey = Util.cellKey(y,x); // x+"."+y;
-  //       var c = this.cellMap.get(cellKey);
-  //       if (c == null) {
-  //         row += '   .';
-  //       } else {
-  //         var downClue = c.downClue;
-  //         if (downClue != null) {
-  //           var aLabel = c.downLabel;
-  //           row += ' '+Util.formatNum(aLabel);
-  //         } else {
-  //           row += '   x';
-  //         }
-  //       }
-  //     }
-  //     // console.log(row);
-  //   }
-  // }
+    for (var y=1; y<=maxDown; y++) {
+      var row = '  '+Util.formatNum(y)+ ' | ';
+      for (var x=1; x<=maxAcross; x++) {
+        var cellKey = Util.cellKey(y,x); // x+"."+y;
+        var c = this.cellMap.get(cellKey);
+        if (c == null) {
+          row += '   .';
+        } else {
+          var downClue = c.downClue;
+          if (downClue != null) {
+            var aLabel = c.downLabel;
+            row += ' '+Util.formatNum(aLabel);
+          } else {
+            row += '   x';
+          }
+        }
+      }
+      console.log(row);
+    }
+  }
   
-  // printAcrossClues() {
-  //   // console.log('AcrossClues:');
-  //   var list1 = this.getAcrossClues();
-  //   for (var i=0; i<list1.length; i++) {
-  //     var clue = list1[i];
-  //     var firstCell = clue.firstCell;
-  //     if (firstCell == null) {
-  //       // console.log('Across clue has no first cell : '+clue.toInputFormat());
-  //       this.msgMgr.addWarn('printAcrossClues : Across clue has no first cell : '+clue.toInputFormat());
-  //       continue;
-  //     }
-  //     var lab = firstCell.label;
-  //     var extra = '';
-  //     var alab = firstCell.acrossLabel;
-  //     if (alab !== 0) {
-  //       extra = ' ('+alab+') ';
-  //     }
-  //     // console.log(lab+'. '+extra+clue.text);
-  //     // console.log('............ Ans = ['+clue.answer+']');
-  //     var lastPos = firstCell.x+(clue.answer.length-1);
-  //     // console.log('............ Row = '+firstCell.y +' ... Col : '+firstCell.x + ' - '+lastPos);
-  //   }
-  // }
+  printAcrossClues() {
+    console.log('AcrossClues:');
+    var list1 = this.getAcrossClues();
+    for (var i=0; i<list1.length; i++) {
+      var clue = list1[i];
+      var firstCell = clue.firstCell;
+      if (firstCell == null) {
+        // console.log('Across clue has no first cell : '+clue.toInputFormat());
+        this.msgMgr.addWarn('printAcrossClues : Across clue has no first cell : '+clue.toInputFormat());
+        continue;
+      }
+      var lab = firstCell.label;
+      var extra = '';
+      var alab = firstCell.acrossLabel;
+      if (alab !== 0) {
+        extra = ' ('+alab+') ';
+      }
+      console.log(lab+'. '+extra+clue.text);
+      console.log('............ Ans = ['+clue.answer+']');
+      var lastPos = firstCell.x+(clue.answer.length-1);
+      console.log('............ Row = '+firstCell.y +' ... Col : '+firstCell.x + ' - '+lastPos);
+    }
+  }
   
-  // printDownClues() {
-  //   // console.log('DownClues:');
-  //   var list1 = this.getDownClues();
-  //   for (var i=0; i<list1.length; i++) {
-  //     var clue = list1[i];
-  //     var firstCell = clue.firstCell;
-  //     if (firstCell == null) {
-  //       // console.log('Down clue has no first cell : '+clue.toInputFormat());
-  //       this.msgMgr.addWarn('printDownClues : Down clue has no first cell : '+clue.toInputFormat());
-  //       continue;
-  //     }
-  //     var lab = firstCell.label;
-  //     var extra = '';
-  //     var alab = firstCell.downLabel;
-  //     if (alab !== 0) {
-  //       extra = ' ('+alab+') ';
-  //     }
-  //     // console.log(lab+'. '+extra+clue.text);
-  //     // console.log('............ Ans = ['+clue.answer+']');
-  //     var lastPos = firstCell.x+(clue.answer.length-1);
-  //     // console.log('............ Row = '+firstCell.y +' ... Col : '+firstCell.x + ' - '+lastPos);
-  //   }
-  // }
+  printDownClues() {
+    console.log('DownClues:');
+    var list1 = this.getDownClues();
+    for (var i=0; i<list1.length; i++) {
+      var clue = list1[i];
+      var firstCell = clue.firstCell;
+      if (firstCell == null) {
+        // console.log('Down clue has no first cell : '+clue.toInputFormat());
+        this.msgMgr.addWarn('printDownClues : Down clue has no first cell : '+clue.toInputFormat());
+        continue;
+      }
+      var lab = firstCell.label;
+      var extra = '';
+      var alab = firstCell.downLabel;
+      if (alab !== 0) {
+        extra = ' ('+alab+') ';
+      }
+      console.log(lab+'. '+extra+clue.text);
+      console.log('............ Ans = ['+clue.answer+']');
+      var lastPos = firstCell.x+(clue.answer.length-1);
+      console.log('............ Row = '+firstCell.y +' ... Col : '+firstCell.x + ' - '+lastPos);
+    }
+  }
 
   hasCellAdjacentAcross(cell, n) {
     var x = cell.x;

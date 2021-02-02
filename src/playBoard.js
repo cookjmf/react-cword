@@ -35,7 +35,7 @@ class PlayBoard extends React.Component {
               key={boardArrayKey}
               boardArrayKey={boardArrayKey}
               cword={cword}
-              updateTimestamp={ this.props.updateTimestamp }
+              updateTimestamp={ this.props.updateTimestamp}    
               onClick={ this.props.onClickPlayCell }
               onChange={ this.props.onChangePlayCell }
               onKeyUp={ this.props.onKeyUpPlayCell }

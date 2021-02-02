@@ -44,10 +44,8 @@ class PlayCell extends React.Component {
   
     let val = cell.value;
    
-    let name = id;
-    if (Util.layerDebug) {
-      name = id+'-'+updateTimestamp;
-    }
+    // used to stop auto-complete
+    let name = id+"-"+updateTimestamp;
   
     return (
       <>
@@ -77,7 +75,7 @@ class PlayCell extends React.Component {
     );
   }
 
-  renderCell(boardArrayKey, cword, updateTimestamp,onClick, onChange, onKeyUp, onKeyDown) {
+  renderCell(boardArrayKey, cword, updateTimestamp, onClick, onChange, onKeyUp, onKeyDown) {
 
     let cellMap = cword.cellMap;
 
