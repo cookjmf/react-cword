@@ -465,9 +465,16 @@ export const apiUrl = () => {
 
   // "proxy": "http://localhost:8080"
 
-  let customVal = process.env.REACT_CWORD_API_URL;
-  if (customVal != null && customVal.length > 0) {
-    val = ''+customVal;
-  }
+  // let customVal = process.env.REACT_CWORD_API_URL;
+  // if (customVal != null && customVal.length > 0) {
+  //   val = ''+customVal;
+  // }
+
+  // for prod build:
+  //    set PUBLIC_URL in build 
+  //         this sets up index,html eg "<link rel="icon" href="http://localhost:8080/favicon.ico">"
+  //    cp build dir to app dir
+  //    add to server.js : "app.use('/', express.static(__dirname+'/app/build'))"
+
   return val;
 }
